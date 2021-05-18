@@ -51,12 +51,12 @@ const close_welcome = function () {
 close_welcome();
 
 
-function welcome_btn_action(){
+function welcome_btn_action() {
     const user = document.getElementById('welcome_name').value;
     const major = document.getElementById('welcome_major').value;
 
 
-    if (user !== null && user !== '' && major !== null && major !== ''){
+    if (user !== null && user !== '' && major !== null && major !== '') {
         setUsername(user);
         setMajorName(major);
 
@@ -196,8 +196,14 @@ function get_semester_course_list(semester) {
     return new_list;
 }
 
-function delete_semester() {
-    let semester_name = prompt("Enter semester name:");
+function delete_semester(id) {
+    if(id === '' || id === 'Choose...'){
+       open_alert('No semester is deleted !');
+       return
+    }
+
+    let semester_name = id;
+    close_delete_semester_w();
 
     //check semester is in list\
     let complete_proses = false;
@@ -241,7 +247,7 @@ function delete_semester() {
 
         //delete linked courses
         get_semester_course_list(temp);
-        for(let i = 0 ; i < get_semester_course_list(temp).length ; i++){
+        for (let i = 0; i < get_semester_course_list(temp).length; i++) {
             get_semester_course_list(temp).Semester = temp_semester;
         }
 
@@ -411,8 +417,8 @@ function open_insert_Course() {
                     <input type="text" class="form-control form-control-sm" id="courseName" placeholder="course Name">
                 </div>
                 <div class="form-group">
-                    <label for="courseName">Credit</label>
-                    <input type="text" class="form-control form-control-sm" id="courseCredit" placeholder="course Name">
+                    <label for="courseCredit">Credit</label>
+                    <input type="text" class="form-control form-control-sm" id="courseCredit" placeholder="course credit">
                 </div>
                 <div class="form-group">
                     <label for="preR_1">Pre Request | 1</label>
@@ -461,8 +467,14 @@ function close_insert_Course() {
     closeModal();
 }
 
-function delete_course() {
-    let courseID = prompt("Enter Course ID:");
+function delete_course(id) {
+
+    if (id === 'Choose...'){
+        close_delete_course_w();
+        open_alert('No course is deleted !');
+        return;
+    }
+    let courseID =id;
 
     // check input
     if (courseID == null) {
@@ -490,6 +502,12 @@ function delete_course() {
 
             //display table
             display_table();
+
+            //display delete message
+            open_alert(id+ ' is deleted.');
+
+            //close delete window
+            close_delete_course_w();
 
             //Reload Page
             location.reload()
@@ -567,13 +585,13 @@ function get_No_Course_RG_CR() {
     return parseInt(data);
 }
 
-function rest_all_data(){
+function rest_all_data() {
     let input = prompt('Are you shore to delete all your data, Enter "yes" to conform');
     input = input.toLocaleLowerCase();
-    if (input === 'yes' ){
+    if (input === 'yes') {
         localStorage.clear();
         location.reload();
-    }else{
+    } else {
         open_alert('Your request is rejected.');
     }
 }

@@ -3,7 +3,6 @@
 class Major {
     name;
     courses_list = [];
-    totalCR = 1 ;
 
     constructor() {
     }
@@ -39,16 +38,6 @@ class Semester {
         this.name = name;
     }
 
-    numberOfCourses() {
-        return this.courses_list.length;
-    }
-
-    totalCR() {
-        let total = 0;
-        for (let i = 0; i < this.courses_list.length; i++) {
-            total += this.courses_list[i].credit;
-        }
-    }
 }
 
 
