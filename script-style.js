@@ -88,3 +88,76 @@ function close_delete_course_w() {
     delete_course_window.classList.add('delete_course_window_hide');
 }
 close_delete_course_w()
+
+//image window
+const image_window = document.querySelector('.image_window');
+
+function open_image_w(){
+    image_window.classList.remove('image_window_hide');
+    checkImage();
+}
+
+function close_image_w(){
+    image_window.classList.add('image_window_hide');
+}
+close_image_w();
+
+function previewFile(){
+    const preview = document.querySelector('img');
+    const file = document.querySelector('input[type=file]').files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+        // convert image file to base64 string
+        preview.src = reader.result;
+        image = localStorage.setItem('image',preview.src);
+    }, false);
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+
+function checkImage(){
+    if(check_key_in_local('image')){
+        const preview = document.querySelector('img');
+        preview.src = localStorage.getItem('image');
+    }
+}
+
+
+// color mode
+const color_mode_window = document.querySelector('.color_mode_w');
+
+function open_color_mode_w(){
+    color_mode_window.classList.remove('color_mode_w_hide');
+}
+
+const body_color = document.querySelector('body');
+
+
+function default_color(){
+    if ('color' in localStorage){
+        body_color.style.background = localStorage.getItem('color');
+    }else{
+        body_color.style.background="linear-gradient(15deg, #0a1121 0%, #377799 100%)";
+        localStorage.setItem('color',body_color.style.background);
+    }
+}
+default_color();
+
+
+function change_color(){
+    let color_code_elm = document.getElementById('color_id').value;
+    body_color.style.background=`linear-gradient(15deg, #0a1121 0%, ${color_code_elm} 100%)`;
+    localStorage.setItem('color',body_color.style.background);
+    default_color();
+}
+
+function close_color_mode_w(){
+    color_mode_window.classList.add('color_mode_w_hide');
+}
+close_color_mode_w();
+
+
+

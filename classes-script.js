@@ -47,6 +47,7 @@ let user_name;
 let major = new Major();
 let semester_list = [];
 let temp_semester = new Semester('temp');
+let image;
 
 
 

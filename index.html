@@ -9,6 +9,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <title>My Graduate Plan</title>
 
@@ -47,8 +48,11 @@
 
             </tbody>
         </table>
+<div>
+    <button class="btn btn-dark" type="reset" onclick="rest_all_data()">Rest All Data</button>
+    <button class="btn btn-outline-light" type="reset" onclick="open_color_mode_w()">Color Mode</button>
+</div>
 
-        <button class="btn btn-dark" type="reset" onclick="rest_all_data()">Rest All Data</button>
     </div>
     <hr class="hr">
     <!--  end major info -->
@@ -58,6 +62,7 @@
         <div class="button-cover">
             <button type="button" class="btn btn-outline-light" onclick="new_semester();">Insert New Semester</button>
             <button type="button" class="btn btn-outline-light" onclick="open_delete_semester_w()">Delete Semester</button>
+            <button type="button" class="btn btn-outline-light" onclick="open_image_w()">View Plan Image</button>
         </div>
         <div class="row" id="display_semester">
 
@@ -85,8 +90,6 @@
             </tr>
             </thead>
             <tbody id="display_courses">
-
-
             </tbody>
         </table>
     </div>
@@ -132,6 +135,27 @@
     <div class="delete_course_window" id="delete_course_window">
     </div>
     <!-- Delete course -->
+
+    <!-- Delete course -->
+    <div class="image_window" id="image_window">
+        <h4>Upload your major plan image to help you during work.</h4>
+        <div>
+            <input type="file" class="form-control" onchange="previewFile()" accept="image/*"><br>
+        </div>
+        <div>
+            <img src="" class="img-fluid">
+        </div>
+        <button type="button" class="btn btn-outline-secondary" onclick="close_image_w()" style="margin-top: 10px">close</button>
+    </div>
+    <!-- Delete course -->
+
+    <!-- Change color mode  -->
+    <div class="color_mode_w">
+        <h4>Change Color Mode</h4>
+        <input type="color" class="form-control form-control-color" id="color_id" onchange="change_color()">
+        <button type="button" class="btn btn-outline-secondary" onclick="close_color_mode_w()" style="margin-top: 10px">close</button>
+    </div>
+    <!-- endChange color mode -->
 
 </div>
 

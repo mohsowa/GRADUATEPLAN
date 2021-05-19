@@ -208,7 +208,7 @@ function delete_semester(id) {
     //check semester is in list\
     let complete_proses = false;
     for (let i = 0; i < semester_list.length; i++) {
-        if (semester_name.match(semester_list[i].name)) {
+        if (semester_name === semester_list[i].name) {
             complete_proses = true;
             break;
         }
@@ -218,7 +218,7 @@ function delete_semester(id) {
         // get index
         let index;
         for (let i = 0; i < semester_list.length; i++) {
-            if (semester_name.match(semester_list[i].name)) {
+            if (semester_name === semester_list[i].name) {
                 index = i;
                 break;
             }
@@ -276,12 +276,13 @@ function new_Course() {
     const courseCredit = document.getElementById('courseCredit').value;
     const coursePreReq1 = document.getElementById('preR_1').value;
     const coursePreReq2 = document.getElementById('preR_2').value;
+    const coursePreReq3 = document.getElementById('preR_3').value;
 
     // check course id
     let complete_process = true;
     if (courseID.length !== 0) {
         for (let i = 0; i < major.courses_list.length; i++) {
-            if (major.courses_list[i].id.match(courseID)) {
+            if (major.courses_list[i].id === courseID) {
                 complete_process = false;
                 open_alert('Course is signed before !');
                 break;
@@ -296,7 +297,7 @@ function new_Course() {
     if (complete_process) {
         if ((Number(courseCredit).toFixed() >= 0) && courseCredit != null) {
             // add to array
-            let course = new Course(courseID, courseName, courseCredit, [coursePreReq1, coursePreReq2]);
+            let course = new Course(courseID, courseName, courseCredit, [coursePreReq1, coursePreReq2, coursePreReq3]);
             major.courses_list.push(course);
 
             //saveData
@@ -329,7 +330,7 @@ function getCourse_innerHTML(course) {
                 <td>${course.id}</td>
                 <td>${course.name}</td>
                 <td>${course.credit}</td>
-                <td>${course.pre_request[0]}, ${course.pre_request[1]}</td>
+                <td>${course.pre_request[0]}, ${course.pre_request[1]} , ${course.pre_request[2]}</td>
                 <td>
                     <div class="form-group col-">
                         <select id="option_${course.id}" class="form-control"
@@ -435,6 +436,13 @@ function open_insert_Course() {
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="preR_3">Pre Request | 3</label>
+                    <select class="form-control form-control-sm" id="preR_3">
+                        <option selected>No PreRequisite</option>
+                        ${get_courseList_pre()}
+                    </select>
+                </div>
+                <div class="form-group">
                     <button type="button" class="btn btn-outline-success close-modal" id="insert_course"
                             onclick="new_Course()"> Insert
                     </button>
@@ -486,7 +494,7 @@ function delete_course(id) {
     }
 
     for (let i = 0; i < major.courses_list.length; i++) {
-        if (major.courses_list[i].id.match(courseID)) {
+        if (major.courses_list[i].id === courseID) {
             open_alert(major.courses_list[i].id + " is deleted correctly.");
             delete_course_h(major.courses_list[i]);
 
@@ -538,7 +546,7 @@ function delete_course_h(course) {
 function get_course_by_ID(temp_id) {
     let course;
     for (let i = 0; i < major.courses_list.length; i++) {
-        if (temp_id.match(major.courses_list[i].id)) {
+        if (temp_id === major.courses_list[i].id) {
             course = major.courses_list[i];
             break;
         }
@@ -549,7 +557,7 @@ function get_course_by_ID(temp_id) {
 function get_Semester_by_ID(temp_name) {
     let Semester;
     for (let i = 0; i < semester_list.length; i++) {
-        if (temp_name.match(semester_list[i].name)) {
+        if (temp_name === semester_list[i].name) {
             Semester = semester_list[i];
         }
     }
