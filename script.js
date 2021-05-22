@@ -2,12 +2,7 @@
 console.log('script working');
 
 //////////////////////////
-/*
-chrome.browserAction.onClicked.addListener(function(activeTab){
-    var newURL = "index.html";
-    chrome.tabs.create({ url: newURL });
-});
- */
+
 ///////// classes /////////
 
 class Major {
