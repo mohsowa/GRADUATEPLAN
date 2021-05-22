@@ -1,5 +1,225 @@
 'use strict';
+console.log('script working');
+
+//////////////////////////
+chrome.browserAction.onClicked.addListener(function(activeTab){
+    var newURL = "index.html";
+    chrome.tabs.create({ url: newURL });
+});
+///////// classes /////////
+
+class Major {
+    name;
+    courses_list = [];
+
+    constructor() {
+    }
+
+    setName(name) {
+        this.name = name
+    }
+
+}
+
+class Course {
+
+    id;
+    name;
+    credit;
+    pre_request = [];
+    Semester = new Semester('temp');
+
+    constructor(id, name, credit, pre_request) {
+        this.id = id;
+        this.name = name;
+        this.credit = credit;
+        this.pre_request = pre_request;
+    }
+
+}
+
+class Semester {
+    name;
+    courses_list = [];
+
+    constructor(name) {
+        this.name = name;
+    }
+
+}
+
+///////// variable /////////
+
+let user_name;
+let major = new Major();;
+let semester_list = [];
+let temp_semester = new Semester('temp');
+let image;
+
+// check data
 check_all_key_local();
+///////// Style - script /////////
+
+// insert course
+const modal = document.querySelector('.modal');
+const overlay = document.querySelector('.overlay');
+
+const openModal = function () {
+    modal.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+};
+
+const closeModal = function () {
+    modal.classList.add('hidden');
+    overlay.classList.add('hidden');
+};
+
+
+//alert_window
+const alert_window = document.querySelector('.alert_window');
+
+const open_alert = function (message) {
+    const message_elm = document.getElementById('alert_message');
+    message_elm.textContent = message;
+    alert_window.classList.remove('alert_window_hidden');
+};
+
+const close_alert = function () {
+    alert_window.classList.add('alert_window_hidden');
+};
+
+//Delete_semester
+const delete_Semester_window = document.querySelector('.delete_semester_window');
+
+function open_delete_semester_w() {
+    delete_Semester_window.classList.remove('delete_semester_window_hide');
+    const elm_option = document.getElementById('delete_semester_window');
+    elm_option.innerHTML = `
+        <h4 >Delete Semester</h4>
+        <select class="form-control" id="delete_semester_option" style="margin-bottom: 10px" onchange="delete_semester(this.value)">
+       <option selected>Choose...</option>
+        ${open_delete_semester_w_get_option()}
+        </select>
+        <button type="button" class="btn btn-outline-secondary"  onclick="close_delete_semester_w()">Close
+        </button>
+    `;
+}
+
+function open_delete_semester_w_get_option() {
+    let data = ``;
+    for (let i = 0; i < semester_list.length; i++) {
+        data += `<option>${semester_list[i].name}</option>`
+    }
+    return data;
+}
+
+function close_delete_semester_w() {
+    delete_Semester_window.classList.add('delete_semester_window_hide');
+}
+
+close_delete_semester_w();
+
+//Delete_course
+const delete_course_window = document.querySelector('.delete_course_window');
+
+function open_delete_course_w(){
+    delete_course_window.classList.remove('delete_course_window_hide');
+    const elm_option = document.getElementById('delete_course_window');
+    elm_option.innerHTML = `
+        <h4 >Delete Course</h4>
+        <select class="form-control" id="delete_course_option" style="margin-bottom: 10px" onchange="delete_course(this.value)">
+       <option selected>Choose...</option>
+        ${open_delete_course_w_get_option()}
+        </select>
+        <button type="button" class="btn btn-outline-secondary"  onclick="close_delete_course_w()">Close
+        </button>
+    `;
+}
+
+function open_delete_course_w_get_option() {
+    let data = ``;
+    for (let i = 0; i < major.courses_list.length; i++) {
+        data += `<option>${major.courses_list[i].id}</option>`
+    }
+    return data;
+}
+
+function close_delete_course_w() {
+    delete_course_window.classList.add('delete_course_window_hide');
+}
+close_delete_course_w()
+
+//image window
+const image_window = document.querySelector('.image_window');
+
+function open_image_w(){
+    image_window.classList.remove('image_window_hide');
+    checkImage();
+}
+
+function close_image_w(){
+    image_window.classList.add('image_window_hide');
+}
+close_image_w();
+
+function previewFile(){
+    const preview = document.querySelector('img');
+    const file = document.querySelector('input[type=file]').files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+        // convert image file to base64 string
+        preview.src = reader.result;
+        image = localStorage.setItem('image',preview.src);
+    }, false);
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+
+function checkImage(){
+    if(check_key_in_local('image')){
+        const preview = document.querySelector('img');
+        preview.src = localStorage.getItem('image');
+    }
+}
+
+
+// color mode
+const color_mode_window = document.querySelector('.color_mode_w');
+
+function open_color_mode_w(){
+    color_mode_window.classList.remove('color_mode_w_hide');
+}
+
+const body_color = document.querySelector('body');
+
+
+function default_color(){
+    if ('color' in localStorage){
+        body_color.style.background = localStorage.getItem('color');
+    }else{
+        body_color.style.background="linear-gradient(15deg, #0a1121 0%, #377799 100%)";
+        localStorage.setItem('color',body_color.style.background);
+    }
+}
+default_color();
+
+
+function change_color(){
+    let color_code_elm = document.getElementById('color_id').value;
+    body_color.style.background=`linear-gradient(15deg, #0a1121 0%, ${color_code_elm} 100%)`;
+    localStorage.setItem('color',body_color.style.background);
+    default_color();
+}
+
+function close_color_mode_w(){
+    color_mode_window.classList.add('color_mode_w_hide');
+}
+close_color_mode_w();
+
+///////// Data - script /////////
 
 // welcome
 const elm_user = document.getElementById('user');
@@ -39,16 +259,15 @@ display_table();
 
 //welcome
 
-const welcome_window = document.querySelector('.Welcome_window');
-
-const open_welcome = function () {
+function open_welcome() {
+    const welcome_window = document.querySelector('.Welcome_window');
     welcome_window.classList.remove('Welcome_window_hidden');
-};
+}
 
-const close_welcome = function () {
+function close_welcome () {
+    const welcome_window = document.querySelector('.Welcome_window');
     welcome_window.classList.add('Welcome_window_hidden');
-};
-close_welcome();
+}
 
 
 function welcome_btn_action() {
@@ -62,39 +281,6 @@ function welcome_btn_action() {
 
     }
     location.reload();
-}
-
-//save data
-function check_key_in_local(value) {
-    return `${value}` in localStorage;
-}
-
-function check_all_key_local() {
-    if (check_key_in_local('user')) {
-        user_name = JSON.parse(localStorage.getItem('user'))
-    } else {
-        open_welcome();
-    }
-
-    if (check_key_in_local('major')) {
-        major = JSON.parse(localStorage.getItem('major'))
-    } else {
-        open_welcome()
-    }
-
-    if (check_key_in_local('semester_list')) {
-        semester_list = JSON.parse(localStorage.getItem('semester_list'))
-    }
-}
-
-function setUsername(user) {
-    user_name = user;
-    localStorage.setItem('user', JSON.stringify(user_name));
-}
-
-function setMajorName(value) {
-    major.setName(value);
-    localStorage.setItem('major', JSON.stringify(major));
 }
 
 //Semester
@@ -198,8 +384,8 @@ function get_semester_course_list(semester) {
 
 function delete_semester(id) {
     if(id === '' || id === 'Choose...'){
-       open_alert('No semester is deleted !');
-       return
+        open_alert('No semester is deleted !');
+        return
     }
 
     let semester_name = id;
@@ -602,4 +788,37 @@ function rest_all_data() {
     } else {
         open_alert('Your request is rejected.');
     }
+}
+
+//save data
+function check_key_in_local(value) {
+    return `${value}` in localStorage;
+}
+
+function check_all_key_local() {
+    if (check_key_in_local('user')) {
+        user_name = JSON.parse(localStorage.getItem('user'))
+    } else {
+        open_welcome();
+    }
+
+    if (check_key_in_local('major')) {
+        major = JSON.parse(localStorage.getItem('major'))
+    }else {
+        open_welcome();
+    }
+
+    if (check_key_in_local('semester_list')) {
+        semester_list = JSON.parse(localStorage.getItem('semester_list'))
+    }
+}
+
+function setUsername(user) {
+    user_name = user;
+    localStorage.setItem('user', JSON.stringify(user_name));
+}
+
+function setMajorName(value) {
+    major.setName(value);
+    localStorage.setItem('major', JSON.stringify(major));
 }
