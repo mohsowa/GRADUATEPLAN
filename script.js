@@ -1,8 +1,6 @@
 'use strict';
 console.log('script working');
 
-//////////////////////////
-
 ///////// classes /////////
 
 class Major {
@@ -48,7 +46,7 @@ class Semester {
 ///////// variable /////////
 
 let user_name;
-let major = new Major();;
+let major = new Major();
 let semester_list = [];
 let temp_semester = new Semester('temp');
 let image;
@@ -89,25 +87,18 @@ const close_alert = function () {
 const delete_Semester_window = document.querySelector('.delete_semester_window');
 
 function open_delete_semester_w() {
+    open_delete_semester_w_get_option();
     delete_Semester_window.classList.remove('delete_semester_window_hide');
-    const elm_option = document.getElementById('delete_semester_window');
-    elm_option.innerHTML = `
-        <h4 >Delete Semester</h4>
-        <select class="form-control" id="delete_semester_option" style="margin-bottom: 10px" onchange="delete_semester(this.value)">
-       <option selected>Choose...</option>
-        ${open_delete_semester_w_get_option()}
-        </select>
-        <button type="button" class="btn btn-outline-secondary"  onclick="close_delete_semester_w()">Close
-        </button>
-    `;
+
 }
 
 function open_delete_semester_w_get_option() {
-    let data = ``;
+    const element = document.getElementById('delete_semester_option');
+    let data = `<option selected>Choose...</option>`;
     for (let i = 0; i < semester_list.length; i++) {
         data += `<option>${semester_list[i].name}</option>`
     }
-    return data;
+    element.innerHTML = data;
 }
 
 function close_delete_semester_w() {
@@ -121,24 +112,16 @@ const delete_course_window = document.querySelector('.delete_course_window');
 
 function open_delete_course_w(){
     delete_course_window.classList.remove('delete_course_window_hide');
-    const elm_option = document.getElementById('delete_course_window');
-    elm_option.innerHTML = `
-        <h4 >Delete Course</h4>
-        <select class="form-control" id="delete_course_option" style="margin-bottom: 10px" onchange="delete_course(this.value)">
-       <option selected>Choose...</option>
-        ${open_delete_course_w_get_option()}
-        </select>
-        <button type="button" class="btn btn-outline-secondary"  onclick="close_delete_course_w()">Close
-        </button>
-    `;
+    open_delete_course_w_get_option()
 }
 
 function open_delete_course_w_get_option() {
-    let data = ``;
+    const element = document.getElementById('delete_course_option');
+    let data = `<option selected>Choose...</option>`;
     for (let i = 0; i < major.courses_list.length; i++) {
         data += `<option>${major.courses_list[i].id}</option>`
     }
-    return data;
+    element.innerHTML = data;
 }
 
 function close_delete_course_w() {
@@ -517,8 +500,7 @@ function getCourse_innerHTML(course) {
                 <td>
                     <div class="form-group col-">
                         <select id="option_${course.id}" class="form-control"
-                                style="background-color: rgba(255,255,255,0.02); color: white"
-                                onchange="add_course_to_semester(this.id)">
+                                style="background-color: rgba(255,255,255,0.02); color: white">
                             ${getOption_getCourse_innerHTML(course.Semester)}
                         </select>
                     </div>
@@ -553,10 +535,12 @@ function display_table() {
     for (let i = 0; i < major.courses_list.length; i++) {
         elm_display_course.append(getCourse_innerHTML(major.courses_list[i]));
     }
+    add_course_to_semester_Listener();
 }
 
 function add_course_to_semester(id) {
     let temp_id = id.substr(7);
+
 
     // add course to semester
     let semester = get_Semester_by_ID(document.getElementById(id).value);
@@ -586,61 +570,11 @@ function add_course_to_semester(id) {
 }
 
 function open_insert_Course() {
-    // form
-    const element = document.getElementById('insert_course_form');
-    element.innerHTML = `
-     <form>
-                <h2 style="color: rgba(58,59,64,0.84); ">Insert new Course</h2>
-                <div class="form-group">
-                    <label for="courseID">Course ID</label>
-                    <input type="text" class="form-control form-control-sm" id="courseID"
-                           placeholder="course ID | e.g. Math 101 , ICS 102">
-                </div>
-                <div class="form-group">
-                    <label for="courseName">Name</label>
-                    <input type="text" class="form-control form-control-sm" id="courseName" placeholder="course Name">
-                </div>
-                <div class="form-group">
-                    <label for="courseCredit">Credit</label>
-                    <input type="text" class="form-control form-control-sm" id="courseCredit" placeholder="course credit">
-                </div>
-                <div class="form-group">
-                    <label for="preR_1">Pre Request | 1</label>
-                    <select class="form-control form-control-sm" id="preR_1">
-                    <option selected>No PreRequisite</option>
-                       ${get_courseList_pre()}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="preR_2">Pre Request | 2</label>
-                    <select class="form-control form-control-sm" id="preR_2">
-                        <option selected>No PreRequisite</option>
-                        ${get_courseList_pre()}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="preR_3">Pre Request | 3</label>
-                    <select class="form-control form-control-sm" id="preR_3">
-                        <option selected>No PreRequisite</option>
-                        ${get_courseList_pre()}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-outline-success close-modal" id="insert_course"
-                            onclick="new_Course()"> Insert
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary close-modal"
-                            onclick="close_insert_Course();">Close
-                    </button>
-                </div>
-            </form>
-    `;
-    //open
     openModal();
 }
 
 function get_courseList_pre() {
-    let data;
+    let data='<option selected>No PreRequisite</option>';
     for (let i = 0; i < major.courses_list.length; i++) {
         data += `<option>${major.courses_list[i].id}</option>`;
     }
@@ -671,7 +605,7 @@ function delete_course(id) {
     if (courseID == null) {
         open_alert('No course ID is signed!');
         return;
-    } else if (courseID == '') {
+    } else if (courseID === '') {
         open_alert('Field is empty');
         return;
     }
@@ -722,7 +656,6 @@ function delete_course_h(course) {
     console.log(new_array)
     major.courses_list = new_array;
 }
-
 
 // get Data
 
@@ -818,4 +751,114 @@ function setUsername(user) {
 function setMajorName(value) {
     major.setName(value);
     localStorage.setItem('major', JSON.stringify(major));
+}
+
+//Listener Event
+
+//welcome btn
+document.getElementById("welcome_btn").addEventListener("click", function (){
+    welcome_btn_action();
+});
+
+//Rest btn
+document.getElementById("reset_btn").addEventListener("click", function (){
+    rest_all_data();
+});
+
+//color btn
+document.getElementById("color_btn").addEventListener("click", function (){
+    open_color_mode_w();
+});
+
+//close color w btn
+document.getElementById("close_color_btn").addEventListener("click", function (){
+    close_color_mode_w();
+});
+
+//change color on change
+document.getElementById("color_id").addEventListener("change", function (){
+    change_color();
+});
+
+// Insert new semester btn
+document.getElementById("open_new_semester_btn").addEventListener("click", function (){
+    new_semester();
+});
+
+// Delete Semester btn
+document.getElementById("delete_semester_w_btn").addEventListener("click", function (){
+    open_delete_semester_w();
+});
+
+// view plan image btn
+document.getElementById("open_imgPlan_btn").addEventListener("click", function (){
+    open_image_w();
+});
+
+// view plan image btn
+document.getElementById("previewFile").addEventListener("change", function (){
+    previewFile();
+});
+
+// close plan image btn
+document.getElementById("close_imgPlan_btn").addEventListener("click", function (){
+    close_image_w();
+});
+
+// insert new course btn
+document.getElementById("open_insert_Course_btn").addEventListener("click", function (){
+    open_insert_Course();
+    document.getElementById('preR_1').innerHTML =get_courseList_pre();
+    document.getElementById('preR_2').innerHTML =get_courseList_pre();
+    document.getElementById('preR_3').innerHTML =get_courseList_pre();
+});
+
+// close alert window btn
+document.getElementById("close_alert_btn").addEventListener("click", function (){
+    close_alert();
+});
+
+// delete course btn
+document.getElementById("open_delete_course_w_btn").addEventListener("click", function (){
+    open_delete_course_w();
+});
+
+// insert course action
+document.getElementById("insert_course").addEventListener("click", function (){
+    new_Course();
+});
+
+// close inset course window
+document.getElementById("close_insert_Course_btn").addEventListener("click", function (){
+    close_insert_Course();
+});
+
+//close delete semester window btn
+document.getElementById("close_o_delete_semester_btn").addEventListener("click", function (){
+    close_delete_semester_w();
+});
+
+// delete semester action
+document.getElementById("delete_semester_option").addEventListener("change", function (){
+   delete_semester(this.value);
+});
+
+// close delete course window btn
+document.getElementById("close_delete_course_w_btn").addEventListener("click", function (){
+    close_delete_course_w();
+});
+
+// delete course action
+document.getElementById("delete_course_option").addEventListener("change", function (){
+    delete_course(this.value);
+});
+
+function add_course_to_semester_Listener(){
+    for (let i = 0 ; i < major.courses_list.length; i++){
+        let temp_id = "option_"+major.courses_list[i].id;
+
+        document.getElementById(temp_id).addEventListener("change", function (){
+            add_course_to_semester(temp_id);
+        });
+    }
 }

@@ -5,10 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style.css"/>
-    <!link rel="manifest" href="manifest.json">
+    <meta http-equiv="Content-Security-Policy"
+          content="script-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js 'unsafe-inline' "/>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
     <title>My Graduate Plan</title>
 
@@ -47,10 +49,10 @@
 
             </tbody>
         </table>
-<div>
-    <button class="btn btn-dark" type="reset" onclick="rest_all_data()">Rest All Data</button>
-    <button class="btn btn-outline-light" type="reset" onclick="open_color_mode_w()">Color Mode</button>
-</div>
+        <div>
+            <button class="btn btn-dark" type="reset" id="reset_btn">Reset All Data</button>
+            <button class="btn btn-outline-light" type="reset" id="color_btn">Color Mode</button>
+        </div>
 
     </div>
     <hr class="hr">
@@ -59,13 +61,11 @@
     <!--  start semester tables -->
     <div class="semester">
         <div class="button-cover">
-            <button type="button" class="btn btn-outline-light" onclick="new_semester();">Insert New Semester</button>
-            <button type="button" class="btn btn-outline-light" onclick="open_delete_semester_w()">Delete Semester</button>
-            <button type="button" class="btn btn-outline-light" onclick="open_image_w()">View Plan Image</button>
+            <button type="button" class="btn btn-outline-light" id="open_new_semester_btn">Insert New Semester</button>
+            <button type="button" class="btn btn-outline-light" id="delete_semester_w_btn">Delete Semester</button>
+            <button type="button" class="btn btn-outline-light" id="open_imgPlan_btn">View Plan Image</button>
         </div>
         <div class="row" id="display_semester">
-
-
         </div>
     </div>
     <hr class="hr">
@@ -74,9 +74,9 @@
     <!--  start courses table -->
     <div class="courses-table">
         <div class="button-cover" style="padding-bottom: 20px;">
-            <button type="button" class="btn btn-outline-light" onclick="open_insert_Course();">Insert New Course
+            <button type="button" class="btn btn-outline-light" id="open_insert_Course_btn">Insert New Course
             </button>
-            <button type="button" class="btn btn-outline-light" onclick="open_delete_course_w()">Delete Course</button>
+            <button type="button" class="btn btn-outline-light" id="open_delete_course_w_btn">Delete Course</button>
         </div>
         <table class="table table-borderless">
             <thead>
@@ -97,8 +97,7 @@
     <!-- alert window -->
     <div class="alert_window alert_window_hidden" id="alert">
         <p id="alert_message"></p>
-
-        <button type="button" class="btn btn-outline-secondary" onclick="close_alert();">Close</button>
+        <button type="button" class="btn btn-outline-secondary" id="close_alert_btn">Close</button>
     </div>
     <!-- end alert window -->
 
@@ -110,7 +109,7 @@
                style="margin-bottom: 20px">
         <input class="form-control" type="text" id="welcome_major" placeholder="Enter your major"
                style="margin-bottom: 20px">
-        <button type="button" class="btn btn-outline-secondary" id="welcome_btn" onclick="welcome_btn_action();">OK
+        <button type="button" class="btn btn-outline-secondary" id="welcome_btn">OK
         </button>
 
     </div>
@@ -121,45 +120,97 @@
     </div>
     <div class="overlay hidden">
         <div class="container" style="align-content: center" id="insert_course_form">
+            <form>
+                <h2 style="color: rgba(58,59,64,0.84); ">Insert new Course</h2>
+                <div class="form-group">
+                    <label for="courseID">Course ID</label>
+                    <input type="text" class="form-control form-control-sm" id="courseID"
+                           placeholder="course ID | e.g. Math 101 , ICS 102">
+                </div>
+                <div class="form-group">
+                    <label for="courseName">Name</label>
+                    <input type="text" class="form-control form-control-sm" id="courseName" placeholder="course Name">
+                </div>
+                <div class="form-group">
+                    <label for="courseCredit">Credit</label>
+                    <input type="text" class="form-control form-control-sm" id="courseCredit"
+                           placeholder="course credit">
+                </div>
+                <div class="form-group">
+                    <label for="preR_1">Pre Request | 1</label>
+                    <select class="form-control form-control-sm" id="preR_1">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="preR_2">Pre Request | 2</label>
+                    <select class="form-control form-control-sm" id="preR_2">
+                        <option selected>No PreRequisite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="preR_3">Pre Request | 3</label>
+                    <select class="form-control form-control-sm" id="preR_3">
+                        <option selected>No PreRequisite</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-outline-success close-modal" id="insert_course">Insert</button>
+                    <button type="button" class="btn btn-outline-secondary close-modal" id="close_insert_Course_btn">Close</button>
+                </div>
+            </form>
         </div>
     </div>
     <!-- end new Course -->
 
     <!-- Delete Semester -->
     <div class="delete_semester_window" id="delete_semester_window">
+        <div>
+            <h4 >Delete Semester</h4>
+            <select class="form-control" id="delete_semester_option" style="margin-bottom: 10px">
+            </select>
+            <button type="button" class="btn btn-outline-secondary" id="close_o_delete_semester_btn">Close
+            </button>
+        </div>
     </div>
     <!-- Delete Semester -->
 
     <!-- Delete course -->
     <div class="delete_course_window" id="delete_course_window">
+        <h4 >Delete Course</h4>
+        <select class="form-control" id="delete_course_option" style="margin-bottom: 10px">
+        </select>
+        <button type="button" class="btn btn-outline-secondary"  id="close_delete_course_w_btn">Close
+        </button>
     </div>
     <!-- Delete course -->
 
     <!-- Delete course -->
     <div class="image_window" id="image_window">
         <h4>Upload your major plan image to help you during work.</h4>
+        <input type="file" class="form-control" id="previewFile" accept="image/*"><br>
+        <button type="button" class="btn btn-outline-secondary" id="close_imgPlan_btn">close</button>
         <div>
-            <input type="file" class="form-control" onchange="previewFile()" accept="image/*"><br>
+            <img src="" class="img-fluid" style="margin-top: 10px">
         </div>
-        <div>
-            <img src="" class="img-fluid">
-        </div>
-        <button type="button" class="btn btn-outline-secondary" onclick="close_image_w()" style="margin-top: 10px">close</button>
+
     </div>
     <!-- Delete course -->
 
     <!-- Change color mode  -->
     <div class="color_mode_w">
         <h4>Change Color Mode</h4>
-        <input type="color" class="form-control form-control-color" id="color_id" onchange="change_color()">
-        <button type="button" class="btn btn-outline-secondary" onclick="close_color_mode_w()" style="margin-top: 10px">close</button>
+        <input type="color" class="form-control form-control-color" id="color_id">
+        <button type="button" class="btn btn-outline-secondary" id="close_color_btn" style="margin-top: 10px">close
+        </button>
     </div>
     <!-- endChange color mode -->
 
 </div>
 
 <!--bootstrap-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
 
 <footer>
     <div class="container">
@@ -170,6 +221,5 @@
 </footer>
 <script src="script.js"></script>
 </body>
-
 
 </html>
