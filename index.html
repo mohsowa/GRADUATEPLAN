@@ -30,21 +30,29 @@
         <h3 id="user"></h3>
         <table class="table">
             <thead>
-            <tr style="background-color: rgba(255,255,255,0.2);">
+            <tr style="background-color: rgba(255,255,255,0.2); text-align: center";>
                 <th scope="col">No.Semester</th>
+                <th scope="col">No. Remaining Semesters</th>
                 <th scope="col">No.Courses</th>
                 <th scope="col">Total Major CR</th>
                 <th scope="col">Total Courses Registered</th>
                 <th scope="col">Total CR Registered</th>
+                <th scope="col">GPA Point</th>
+                <th scope="col">GPA CR</th>
+                <th scope="col">GPA</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td id="No_Semester">0</td>
+                <td id="No_Remaining_Semesters">0</td>
                 <td id="No_Courses">0</td>
                 <td id="MajorCR">0</td>
                 <td id="No_Course_RG">0</td>
                 <td id="No_Course_RG_CR">0</td>
+                <td id="GPA_Point">0</td>
+                <td id="GPA_CR">0</td>
+                <td id="GPA_Value">0</td>
             </tr>
 
             </tbody>
@@ -86,6 +94,8 @@
                 <th scope="col">Credit</th>
                 <th scope="col">Pre Request</th>
                 <th scope="col">Semester</th>
+                <th scope="col">GPA</th>
+                <th scope="col">Edit</th>
             </tr>
             </thead>
             <tbody id="display_courses">
@@ -109,7 +119,12 @@
                style="margin-bottom: 20px">
         <input class="form-control" type="text" id="welcome_major" placeholder="Enter your major"
                style="margin-bottom: 20px">
-        <button type="button" class="btn btn-outline-secondary" id="welcome_btn">OK
+        <select class="form-control" id="select_GPA_point">
+            <option selected>Choose GPA Point</option>
+            <option >4 GPA Point</option>
+            <option >5 GPA Point</option>
+        </select>
+        <button type="button" class="btn btn-outline-secondary" id="welcome_btn" style="margin-top: 7px">OK
         </button>
 
     </div>
@@ -161,6 +176,52 @@
         </div>
     </div>
     <!-- end new Course -->
+
+    <!-- Edit Course -->
+        <div class="Edit_Course Edit_Course_hide">
+            <div  style="align-content: center">
+                <form>
+                    <h2 style="color: rgba(58,59,64,0.84); ">Edit Course</h2>
+                    <div class="form-group">
+                        <label for="courseID">Course ID</label>
+                        <input type="text" class="form-control form-control-sm" id="e-courseID"
+                               placeholder="course ID | e.g. Math 101 , ICS 102" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseName">Name</label>
+                        <input type="text" class="form-control form-control-sm" id="e-courseName" placeholder="course Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="courseCredit">Credit</label>
+                        <input type="text" class="form-control form-control-sm" id="e-courseCredit"
+                               placeholder="course credit">
+                    </div>
+                    <div class="form-group">
+                        <label for="preR_1">Pre Request | 1</label>
+                        <select class="form-control form-control-sm" id="e-preR_1">
+                            <option selected>No PreRequisite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="preR_2">Pre Request | 2</label>
+                        <select class="form-control form-control-sm" id="e-preR_2">
+                            <option selected>No PreRequisite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="preR_3">Pre Request | 3</label>
+                        <select class="form-control form-control-sm" id="e-preR_3">
+                            <option selected>No PreRequisite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-outline-success close-modal" id="edit_course">Edit</button>
+                        <button type="button" class="btn btn-outline-secondary close-modal" id="close_edit_Course_btn">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <!-- End Edit Course -->
 
     <!-- Delete Semester -->
     <div class="delete_semester_window" id="delete_semester_window">

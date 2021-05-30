@@ -6,6 +6,7 @@ console.log('script working');
 class Major {
     name;
     courses_list = [];
+    GPA_Point;
 
     constructor() {
     }
@@ -13,6 +14,7 @@ class Major {
     setName(name) {
         this.name = name
     }
+
 
 }
 
@@ -23,6 +25,7 @@ class Course {
     credit;
     pre_request = [];
     Semester = new Semester('temp');
+    GPA;
 
     constructor(id, name, credit, pre_request) {
         this.id = id;
@@ -36,6 +39,7 @@ class Course {
 class Semester {
     name;
     courses_list = [];
+    Status;
 
     constructor(name) {
         this.name = name;
@@ -110,7 +114,7 @@ close_delete_semester_w();
 //Delete_course
 const delete_course_window = document.querySelector('.delete_course_window');
 
-function open_delete_course_w(){
+function open_delete_course_w() {
     delete_course_window.classList.remove('delete_course_window_hide');
     open_delete_course_w_get_option()
 }
@@ -127,22 +131,24 @@ function open_delete_course_w_get_option() {
 function close_delete_course_w() {
     delete_course_window.classList.add('delete_course_window_hide');
 }
+
 close_delete_course_w()
 
 //image window
 const image_window = document.querySelector('.image_window');
 
-function open_image_w(){
+function open_image_w() {
     image_window.classList.remove('image_window_hide');
     checkImage();
 }
 
-function close_image_w(){
+function close_image_w() {
     image_window.classList.add('image_window_hide');
 }
+
 close_image_w();
 
-function previewFile(){
+function previewFile() {
     const preview = document.querySelector('img');
     const file = document.querySelector('input[type=file]').files[0];
     const reader = new FileReader();
@@ -150,7 +156,7 @@ function previewFile(){
     reader.addEventListener("load", function () {
         // convert image file to base64 string
         preview.src = reader.result;
-        image = localStorage.setItem('image',preview.src);
+        image = localStorage.setItem('image', preview.src);
     }, false);
 
     if (file) {
@@ -158,8 +164,8 @@ function previewFile(){
     }
 }
 
-function checkImage(){
-    if(check_key_in_local('image')){
+function checkImage() {
+    if (check_key_in_local('image')) {
         const preview = document.querySelector('img');
         preview.src = localStorage.getItem('image');
     }
@@ -169,34 +175,36 @@ function checkImage(){
 // color mode
 const color_mode_window = document.querySelector('.color_mode_w');
 
-function open_color_mode_w(){
+function open_color_mode_w() {
     color_mode_window.classList.remove('color_mode_w_hide');
 }
 
 const body_color = document.querySelector('body');
 
 
-function default_color(){
-    if ('color' in localStorage){
+function default_color() {
+    if ('color' in localStorage) {
         body_color.style.background = localStorage.getItem('color');
-    }else{
-        body_color.style.background="linear-gradient(15deg, #0a1121 0%, #377799 100%)";
-        localStorage.setItem('color',body_color.style.background);
+    } else {
+        body_color.style.background = "linear-gradient(15deg, #0a1121 0%, #377799 100%)";
+        localStorage.setItem('color', body_color.style.background);
     }
 }
+
 default_color();
 
 
-function change_color(){
+function change_color() {
     let color_code_elm = document.getElementById('color_id').value;
-    body_color.style.background=`linear-gradient(15deg, #0a1121 0%, ${color_code_elm} 100%)`;
-    localStorage.setItem('color',body_color.style.background);
+    body_color.style.background = `linear-gradient(15deg, #0a1121 0%, ${color_code_elm} 100%)`;
+    localStorage.setItem('color', body_color.style.background);
     default_color();
 }
 
-function close_color_mode_w(){
+function close_color_mode_w() {
     color_mode_window.classList.add('color_mode_w_hide');
 }
+
 close_color_mode_w();
 
 ///////// Data - script /////////
@@ -204,6 +212,10 @@ close_color_mode_w();
 // welcome
 const elm_user = document.getElementById('user');
 elm_user.textContent = "Welcome " + user_name + "\t| " + major.name;
+
+//No. Remaining Semesters
+const elm_Remaining_Semesters = document.getElementById('No_Remaining_Semesters');
+elm_Remaining_Semesters.textContent = get_No_Remaining_Semesters();
 
 //No.Semester
 const elm_No_Semester = document.getElementById('No_Semester');
@@ -230,6 +242,17 @@ const elm_footer_data = document.getElementById('footer_text');
 let date = new Date();
 elm_footer_data.innerText = `© ${date.getFullYear()} Copyright | MOHSOWA`;
 
+//GPA Point
+const elm_GPA_Point = document.getElementById('GPA_Point');
+elm_GPA_Point.textContent = (major.GPA_Point === undefined) ? 0 : major.GPA_Point;
+
+//GPA Point
+const elm_GPA_CR = document.getElementById('GPA_CR');
+elm_GPA_CR.textContent = get_GPA_CR();
+
+//GPA Point
+const elm_GPA = document.getElementById('GPA_Value');
+elm_GPA.textContent = (get_GPA_CR() === 0)?0:get_main_GPA();
 
 //display semesters
 display_semesters();
@@ -244,23 +267,31 @@ function open_welcome() {
     welcome_window.classList.remove('Welcome_window_hidden');
 }
 
-function close_welcome () {
-    const welcome_window = document.querySelector('.Welcome_window');
-    welcome_window.classList.add('Welcome_window_hidden');
-}
-
 
 function welcome_btn_action() {
     const user = document.getElementById('welcome_name').value;
-    const major = document.getElementById('welcome_major').value;
+    const temp_major = document.getElementById('welcome_major').value;
+    const GPA_point = document.getElementById('select_GPA_point').value;
 
-
-    if (user !== null && user !== '' && major !== null && major !== '') {
-        setUsername(user);
-        setMajorName(major);
-
+    if (user !== null && user !== '' && temp_major !== null && temp_major !== '') {
+        if (GPA_point !== 'Choose GPA Point') {
+            user_name = user
+            major.name = temp_major;
+            if (GPA_point === '4 GPA Point') {
+                major.GPA_Point = 4;
+            } else {
+                major.GPA_Point = 5;
+            }
+            localStorage.setItem('user', JSON.stringify(user_name));
+            localStorage.setItem('major', JSON.stringify(major));
+            location.reload();
+        } else {
+            alert("Choose GPA Point!")
+        }
+    } else {
+        alert("Enter your Name and Your Major")
     }
-    location.reload();
+
 }
 
 //Semester
@@ -270,10 +301,10 @@ function new_semester() {
 
     //check values for semester_name
     if (semester_name == null) {
-        open_alert("No Data is Signed !");
+        alert("No Data is Signed !");
         return;
     } else if (semester_name === "") {
-        open_alert("Field is empty !");
+        alert("Field is empty !");
         return;
     }
 
@@ -283,7 +314,7 @@ function new_semester() {
     for (let i = 0; i < semester_list.length; i++) {
         if (semester_list[i].name === semester_name) {
             inList = true;
-            open_alert(semester_name + " semester is signed before.")
+            alert(semester_name + " semester is signed before.")
             return;
         }
     }
@@ -300,7 +331,7 @@ function new_semester() {
         //display the table again
         display_table();
         //Reload Page
-        location.reload()
+        location.reload();
     }
 }
 
@@ -310,6 +341,7 @@ function display_semesters() {
     for (let i = 0; i < semester_list.length; i++) {
         elm_display_semester.append(getCard_innerHTML(semester_list[i]));
     }
+    semester_status_Listener();
 }
 
 function add_OneSemestersToList(semester) {
@@ -331,23 +363,81 @@ function getCard_innerHTML(semester) {
     const new_element = document.createElement('div');
     new_element.className = 'col-sm-4 semester_cards';
     new_element.id = `semester_${semester.name}`;
-    new_element.innerHTML = `
+    if(display_semester_GPA(semester)){
+        new_element.innerHTML = `
                 <div class="card mb-3" style="max-width: 18rem;">
                     <div class="card-header grid-container">
-                            <div class="semester-name">${semester.name} | ${semester.courses_list.length} Courses | ${get_semester_total_CR(semester.courses_list)} CR</div>
+                            <div class="semester-name">${semester.name} | ${semester.courses_list.length} Courses | ${get_semester_total_CR(semester.courses_list)} CR </div>
+                            <div style="text-align: center" class="semester-name">GPA  ${get_GPA(semester.courses_list)}</div>
+                            ${get_semester_status(semester)}
                     </div>
                         ${getCourses_getCard_innerHTML(new_element.id)}
                 </div>
     `;
+    }else{
+        new_element.innerHTML = `
+                <div class="card mb-3" style="max-width: 18rem;">
+                    <div class="card-header grid-container">
+                            <div class="semester-name">${semester.name} | ${semester.courses_list.length} Courses | ${get_semester_total_CR(semester.courses_list)} CR</div>
+                            ${get_semester_status(semester)}
+                    </div>
+                        ${getCourses_getCard_innerHTML(new_element.id)}
+                </div>
+    `;
+    }
 
     return new_element;
+}
+
+function display_semester_GPA(semester){
+    for(let i = 0 ; i < semester.courses_list.length; i ++){
+        if(semester.courses_list[i].GPA === ''){
+            return false;
+        }
+    }
+    return true;
+}
+
+function get_semester_status(semester) {
+    let data = ``;
+    if (semester.status === undefined) {
+        semester.status = 'Later Semester';
+    }
+    if (semester.status === 'Later Semester') {
+        data += `
+<select class="form-control" id="${semester.name}_status_option" style="background-color: #3375A5; color: white">
+        <option selected style="background-color: white">Later Semester</option>
+        <option style="background-color: #F58E29; color: white">Current Semester</option>
+        <option style="background-color: #F93644; color: white">Finished Semester</option>
+        `;
+    } else if (semester.status === 'Current Semester') {
+        data += `
+<select class="form-control" id="${semester.name}_status_option" style="background-color: #F58E29; color: white">
+        <option style="background-color: #3375A5; color: white">Later Semester</option>
+        <option selected style="background-color: white">Current Semester</option>
+        <option style="background-color: #F93644; color: white">Finished Semester</option>
+        `;
+    } else if (semester.status === 'Finished Semester') {
+        data += `
+<select class="form-control" id="${semester.name}_status_option" style="background-color: #F93644; color: white">
+        <option style="background-color: #3375A5; color: white">Later Semester</option>
+        <option style="background-color: #F58E29; color: white">Current Semester</option>
+        <option selected style="background-color: white">Finished Semester</option>
+        `;
+    }
+    return data + '</select>';
 }
 
 function getCourses_getCard_innerHTML(temp_id) {
     let data = `<div class="card-body"> `;
     let semester = get_Semester_by_ID(temp_id.substr(9));
     for (let i = 0; i < semester.courses_list.length; i++) {
-        data += `<p>${semester.courses_list[i].id}</p>`;
+        if (semester.courses_list[i].GPA === undefined || semester.courses_list[i].GPA === '') {
+            data += `<p>${semester.courses_list[i].id}  |  Credit: ${semester.courses_list[i].credit}</p>`;
+        } else {
+            data += `<p>${semester.courses_list[i].id}   |   Credit: ${semester.courses_list[i].credit}   |   GPA: ${semester.courses_list[i].GPA}</p>`;
+        }
+
     }
     return data + `</div>`;
 }
@@ -363,8 +453,8 @@ function get_semester_course_list(semester) {
 }
 
 function delete_semester(id) {
-    if(id === '' || id === 'Choose...'){
-        open_alert('No semester is deleted !');
+    if (id === '' || id === 'Choose...') {
+        alert('No semester is deleted !');
         return
     }
 
@@ -427,7 +517,7 @@ function delete_semester(id) {
         //Reload Page
         location.reload()
     } else {
-        open_alert("Semester is not found !")
+        alert("Semester is not found !")
     }
 
 
@@ -450,12 +540,12 @@ function new_Course() {
         for (let i = 0; i < major.courses_list.length; i++) {
             if (major.courses_list[i].id === courseID) {
                 complete_process = false;
-                open_alert('Course is signed before !');
+                alert('Course is signed before !');
                 break;
             }
         }
     } else {
-        open_alert('Course ID field is empty !');
+        alert('Course ID field is empty !');
         complete_process = false;
     }
 
@@ -485,7 +575,7 @@ function new_Course() {
             location.reload()
 
         } else {
-            open_alert('Course credit less than 0 !');
+            alert('Course credit less than 0 !');
         }
     }
 }
@@ -505,8 +595,155 @@ function getCourse_innerHTML(course) {
                         </select>
                     </div>
                 </td>
+                <td><div class="form-group col-">
+                        <select id="GPA_${course.id}" class="form-control"
+                                style="background-color: rgba(255,255,255,0.02); color: white">
+                            ${getGPA__innerHTML(course)}
+                        </select>
+                    </div></td>
+                <td>
+                <div>
+                <button class="btn btn-outline-light" style="margin-top: 8px" id="Edit_${course.id}">Edit</button>
+</div>
+</td>
     `;
     return new_element;
+}
+
+function getGPA__innerHTML(course) {
+    let data = ``;
+    if (course.GPA === undefined || course.GPA === '') {
+        data = `
+        <option selected>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'A+') {
+        data = `
+        <option>Choose...</option>
+                            <option selected>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'A') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option selected>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'B+') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option selected>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'B') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option selected>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'C+') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option selected>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'C') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option selected>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'D+') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option selected>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'D') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option selected>D</option>
+                            <option>F</option>
+        `;
+    } else if (course.GPA === 'F') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option  selected>F</option>
+        `;
+    }
+    return data;
 }
 
 function getOption_getCourse_innerHTML(semester) {
@@ -536,6 +773,8 @@ function display_table() {
         elm_display_course.append(getCourse_innerHTML(major.courses_list[i]));
     }
     add_course_to_semester_Listener();
+    assign_GPA_to_course();
+    btn_edit_course_Listener();
 }
 
 function add_course_to_semester(id) {
@@ -574,11 +813,40 @@ function open_insert_Course() {
 }
 
 function get_courseList_pre() {
-    let data='<option selected>No PreRequisite</option>';
+    let data = '<option selected>No PreRequisite</option>';
     for (let i = 0; i < major.courses_list.length; i++) {
         data += `<option>${major.courses_list[i].id}</option>`;
     }
     return data;
+}
+
+function get_courseList_pre_edit(id,pre) {
+    if (pre === 'No PreRequisite'){
+        let data = '<option selected>No PreRequisite</option>';
+        for (let i = 0; i < major.courses_list.length; i++) {
+            if(id !== major.courses_list[i].id){
+                if(pre === major.courses_list[i].id){
+                    data += `<option >${major.courses_list[i].id}</option>`;
+                }else{
+                    data += `<option>${major.courses_list[i].id}</option>`;
+                }
+            }
+        }
+        return data;
+    }else{
+        let data = '<option >No PreRequisite</option>';
+        for (let i = 0; i < major.courses_list.length; i++) {
+            if(id !== major.courses_list[i].id){
+                if(pre === major.courses_list[i].id){
+                    data += `<option selected>${major.courses_list[i].id}</option>`;
+                }else{
+                    data += `<option>${major.courses_list[i].id}</option>`;
+                }
+            }
+        }
+        return data;
+    }
+
 }
 
 function close_insert_Course() {
@@ -594,25 +862,25 @@ function close_insert_Course() {
 
 function delete_course(id) {
 
-    if (id === 'Choose...'){
+    if (id === 'Choose...') {
         close_delete_course_w();
-        open_alert('No course is deleted !');
+        alert('No course is deleted !');
         return;
     }
-    let courseID =id;
+    let courseID = id;
 
     // check input
     if (courseID == null) {
-        open_alert('No course ID is signed!');
+        alert('No course ID is signed!');
         return;
     } else if (courseID === '') {
-        open_alert('Field is empty');
+        alert('Field is empty');
         return;
     }
 
     for (let i = 0; i < major.courses_list.length; i++) {
         if (major.courses_list[i].id === courseID) {
-            open_alert(major.courses_list[i].id + " is deleted correctly.");
+            alert(major.courses_list[i].id + " is deleted correctly.");
             delete_course_h(major.courses_list[i]);
 
             //saveData
@@ -628,8 +896,6 @@ function delete_course(id) {
             //display table
             display_table();
 
-            //display delete message
-            open_alert(id+ ' is deleted.');
 
             //close delete window
             close_delete_course_w();
@@ -641,7 +907,7 @@ function delete_course(id) {
     }
 
     // error message
-    open_alert('The course you want to delete is not found !');
+    alert('The course you want to delete is not found !');
 
 }
 
@@ -649,7 +915,7 @@ function delete_course_h(course) {
     let new_array = [];
 
     for (let i = 0; i < major.courses_list.length; i++) {
-        if (major.courses_list[i] != course) {
+        if (major.courses_list[i] !== course) {
             new_array.push(major.courses_list[i]);
         }
     }
@@ -716,7 +982,7 @@ function rest_all_data() {
         localStorage.clear();
         location.reload();
     } else {
-        open_alert('Your request is rejected.');
+        alert('Your request is rejected.');
     }
 }
 
@@ -733,8 +999,11 @@ function check_all_key_local() {
     }
 
     if (check_key_in_local('major')) {
-        major = JSON.parse(localStorage.getItem('major'))
-    }else {
+        major = JSON.parse(localStorage.getItem('major'));
+        if (major.GPA_Point === undefined) {
+            open_welcome();
+        }
+    } else {
         open_welcome();
     }
 
@@ -743,122 +1012,317 @@ function check_all_key_local() {
     }
 }
 
-function setUsername(user) {
-    user_name = user;
-    localStorage.setItem('user', JSON.stringify(user_name));
-}
-
-function setMajorName(value) {
-    major.setName(value);
-    localStorage.setItem('major', JSON.stringify(major));
-}
 
 //Listener Event
 
 //welcome btn
-document.getElementById("welcome_btn").addEventListener("click", function (){
+document.getElementById("welcome_btn").addEventListener("click", function () {
     welcome_btn_action();
 });
 
 //Rest btn
-document.getElementById("reset_btn").addEventListener("click", function (){
+document.getElementById("reset_btn").addEventListener("click", function () {
     rest_all_data();
 });
 
 //color btn
-document.getElementById("color_btn").addEventListener("click", function (){
+document.getElementById("color_btn").addEventListener("click", function () {
     open_color_mode_w();
 });
 
 //close color w btn
-document.getElementById("close_color_btn").addEventListener("click", function (){
+document.getElementById("close_color_btn").addEventListener("click", function () {
     close_color_mode_w();
 });
 
 //change color on change
-document.getElementById("color_id").addEventListener("change", function (){
+document.getElementById("color_id").addEventListener("change", function () {
     change_color();
 });
 
 // Insert new semester btn
-document.getElementById("open_new_semester_btn").addEventListener("click", function (){
+document.getElementById("open_new_semester_btn").addEventListener("click", function () {
     new_semester();
 });
 
 // Delete Semester btn
-document.getElementById("delete_semester_w_btn").addEventListener("click", function (){
+document.getElementById("delete_semester_w_btn").addEventListener("click", function () {
     open_delete_semester_w();
 });
 
 // view plan image btn
-document.getElementById("open_imgPlan_btn").addEventListener("click", function (){
+document.getElementById("open_imgPlan_btn").addEventListener("click", function () {
     open_image_w();
 });
 
 // view plan image btn
-document.getElementById("previewFile").addEventListener("change", function (){
+document.getElementById("previewFile").addEventListener("change", function () {
     previewFile();
 });
 
 // close plan image btn
-document.getElementById("close_imgPlan_btn").addEventListener("click", function (){
+document.getElementById("close_imgPlan_btn").addEventListener("click", function () {
     close_image_w();
 });
 
 // insert new course btn
-document.getElementById("open_insert_Course_btn").addEventListener("click", function (){
+document.getElementById("open_insert_Course_btn").addEventListener("click", function () {
     open_insert_Course();
-    document.getElementById('preR_1').innerHTML =get_courseList_pre();
-    document.getElementById('preR_2').innerHTML =get_courseList_pre();
-    document.getElementById('preR_3').innerHTML =get_courseList_pre();
+    document.getElementById('preR_1').innerHTML = get_courseList_pre();
+    document.getElementById('preR_2').innerHTML = get_courseList_pre();
+    document.getElementById('preR_3').innerHTML = get_courseList_pre();
 });
 
 // close alert window btn
-document.getElementById("close_alert_btn").addEventListener("click", function (){
+document.getElementById("close_alert_btn").addEventListener("click", function () {
     close_alert();
 });
 
 // delete course btn
-document.getElementById("open_delete_course_w_btn").addEventListener("click", function (){
+document.getElementById("open_delete_course_w_btn").addEventListener("click", function () {
     open_delete_course_w();
 });
 
 // insert course action
-document.getElementById("insert_course").addEventListener("click", function (){
+document.getElementById("insert_course").addEventListener("click", function () {
     new_Course();
 });
 
 // close inset course window
-document.getElementById("close_insert_Course_btn").addEventListener("click", function (){
+document.getElementById("close_insert_Course_btn").addEventListener("click", function () {
     close_insert_Course();
 });
 
 //close delete semester window btn
-document.getElementById("close_o_delete_semester_btn").addEventListener("click", function (){
+document.getElementById("close_o_delete_semester_btn").addEventListener("click", function () {
     close_delete_semester_w();
 });
 
 // delete semester action
-document.getElementById("delete_semester_option").addEventListener("change", function (){
-   delete_semester(this.value);
+document.getElementById("delete_semester_option").addEventListener("change", function () {
+    delete_semester(this.value);
 });
 
 // close delete course window btn
-document.getElementById("close_delete_course_w_btn").addEventListener("click", function (){
+document.getElementById("close_delete_course_w_btn").addEventListener("click", function () {
     close_delete_course_w();
 });
 
 // delete course action
-document.getElementById("delete_course_option").addEventListener("change", function (){
+document.getElementById("delete_course_option").addEventListener("change", function () {
     delete_course(this.value);
 });
 
-function add_course_to_semester_Listener(){
-    for (let i = 0 ; i < major.courses_list.length; i++){
-        let temp_id = "option_"+major.courses_list[i].id;
-
-        document.getElementById(temp_id).addEventListener("change", function (){
+function add_course_to_semester_Listener() {
+    for (let i = 0; i < major.courses_list.length; i++) {
+        let temp_id = "option_" + major.courses_list[i].id;
+        document.getElementById(temp_id).addEventListener("change", function () {
             add_course_to_semester(temp_id);
         });
     }
+}
+
+function assign_GPA_to_course() {
+    for (let i = 0; i < major.courses_list.length; i++) {
+        let temp_id = "GPA_" + major.courses_list[i].id;
+        document.getElementById(temp_id).addEventListener("change", function () {
+            let temp_GPA = document.getElementById(temp_id).value;
+            if (temp_GPA !== "Choose...") {
+                major.courses_list[i].GPA = document.getElementById(temp_id).value
+            } else {
+                major.courses_list[i].GPA = '';
+            }
+            localStorage.setItem('major', JSON.stringify(major));
+            location.reload();
+        });
+    }
+}
+
+function semester_status_Listener() {
+    for (let i = 0; i < semester_list.length; i++) {
+        const temp_id = (semester_list[i].name) + '_status_option';
+        document.getElementById(temp_id).addEventListener("change", function () {
+            let value = document.getElementById(temp_id).value;
+            let prev_value = semester_list[i].status
+            semester_list[i].status = value;
+            if (value === 'Current Semester') {
+                for (let j = 0; j < semester_list.length; j++) {
+                    if (semester_list[j].status === 'Current Semester') {
+                        if (semester_list[j] !== semester_list[i]) {
+                            alert(semester_list[j].name + " is current semester !");
+                            semester_list[i].status = prev_value;
+                        }
+                    }
+                }
+            }
+            localStorage.setItem('semester_list', JSON.stringify(semester_list));
+            location.reload();
+        });
+
+    }
+}
+
+function btn_edit_course_Listener() {
+    for (let i = 0; i < major.courses_list.length; i++) {
+        let temp_id = "Edit_" + major.courses_list[i].id;
+        document.getElementById(temp_id).addEventListener("click", function () {
+            const view = document.querySelector('.Edit_Course');
+            view.classList.remove('Edit_Course_hide');
+
+            // get values
+            //Id
+            document.getElementById('e-courseID').value = major.courses_list[i].id;
+
+            //Name
+            document.getElementById('e-courseName').value = major.courses_list[i].name;
+
+            //Credit
+            document.getElementById('e-courseCredit').value = major.courses_list[i].credit;
+
+            //pre
+            document.getElementById('e-preR_1').innerHTML = get_courseList_pre_edit(major.courses_list[i].id,major.courses_list[i].pre_request[0]);
+            document.getElementById('e-preR_2').innerHTML = get_courseList_pre_edit(major.courses_list[i].id,major.courses_list[i].pre_request[1]);
+            document.getElementById('e-preR_3').innerHTML = get_courseList_pre_edit(major.courses_list[i].id,major.courses_list[i].pre_request[2]);
+
+        });
+    }
+}
+
+//close_edit_Course_btn
+document.getElementById("close_edit_Course_btn").addEventListener("click", function () {
+    const view = document.querySelector('.Edit_Course');
+    view.classList.add('Edit_Course_hide');
+});
+
+document.getElementById("edit_course").addEventListener("click", function () {
+    const course_id = document.getElementById('e-courseID').value;
+
+    for (let i = 0 ; i < major.courses_list.length;i++){
+        if (course_id === major.courses_list[i].id){
+            const pre_1 = document.getElementById('e-preR_1').value;
+            const pre_2 = document.getElementById('e-preR_2').value;
+            const pre_3 = document.getElementById('e-preR_3').value;
+            if(pre_1 !== major.courses_list[i].id && pre_2 !== major.courses_list[i].id && pre_3 !== major.courses_list[i].id){
+                major.courses_list[i].name = document.getElementById('e-courseName').value;
+                major.courses_list[i].credit = document.getElementById('e-courseCredit').value;
+                major.courses_list[i].pre_request[0] = document.getElementById('e-preR_1').value;
+                major.courses_list[i].pre_request[1] = document.getElementById('e-preR_2').value;
+                major.courses_list[i].pre_request[2] = document.getElementById('e-preR_3').value;
+
+                localStorage.setItem('major', JSON.stringify(major));
+                location.reload();
+
+                //const view = document.querySelector('.Edit_Course');
+                //.classList.add('Edit_Course_hide');
+            }else {
+                alert('This course cannot be Pre Request for itself!')
+            }
+        }
+    }
+
+
+});
+
+function GPA_4_Point(List){
+    let value = 0;
+    let total_CR = 0;
+    for (let i = 0 ; i < List.length; i ++){
+        if(List[i].GPA !== undefined){
+            total_CR += parseInt(List[i].credit);
+            if(List[i].GPA === 'A+'){
+                value += parseFloat((4 * List[i].credit));
+            }else if(List[i].GPA === 'A'){
+                value += parseFloat((3.75 * List[i].credit));
+            }else if(List[i].GPA === 'B+'){
+                value += parseFloat((3.5 * List[i].credit));
+            }else if(List[i].GPA === 'B'){
+                value += parseFloat((3 * List[i].credit));
+            }else if(List[i].GPA === 'C+'){
+                value += parseFloat((2.5 * List[i].credit));
+            }else if(List[i].GPA === 'C'){
+                value += parseFloat((2 * List[i].credit));
+            }else if(List[i].GPA === 'D+'){
+                value += parseFloat((1.5 * List[i].credit));
+            }else if(List[i].GPA === 'D'){
+                value += parseFloat((1 * List[i].credit));
+            }else if(List[i].GPA === 'F'){
+                value += parseFloat((0 * List[i].credit));
+            }
+        }else{
+            return undefined;
+        }
+    }
+    value = (value / total_CR);
+    return value.toFixed(2);
+}
+
+function GPA_5_Point(List){
+    let value = 0;
+    let total_CR = 0;
+    for (let i = 0 ; i < List.length; i ++){
+        if(List[i].GPA !== undefined){
+            total_CR += parseInt(List[i].credit);
+            if(List[i].GPA === 'A+'){
+                value += parseFloat((5 * List[i].credit));
+            }else if(List[i].GPA === 'A'){
+                value += parseFloat((4.75 * List[i].credit));
+            }else if(List[i].GPA === 'B+'){
+                value += parseFloat((4.5 * List[i].credit));
+            }else if(List[i].GPA === 'B'){
+                value += parseFloat((4 * List[i].credit));
+            }else if(List[i].GPA === 'C+'){
+                value += parseFloat((3.5 * List[i].credit));
+            }else if(List[i].GPA === 'C'){
+                value += parseFloat((3 * List[i].credit));
+            }else if(List[i].GPA === 'D+'){
+                value += parseFloat((2.5 * List[i].credit));
+            }else if(List[i].GPA === 'D'){
+                value += parseFloat((2 * List[i].credit));
+            }else if(List[i].GPA === 'F'){
+                value += parseFloat((1 * List[i].credit));
+            }
+        }else{
+            return undefined;
+        }
+    }
+    value = (value / total_CR);
+    return value.toFixed(2);
+}
+
+function get_GPA(list){
+    if (major.GPA_Point === 4){
+        return GPA_4_Point(list);
+    }else{
+        return GPA_5_Point(list);
+    }
+}
+
+function get_GPA_CR(){
+    let value = 0 ;
+    for (let i = 0 ; i < major.courses_list.length; i++){
+        if( major.courses_list[i].GPA !== ''){
+            value += parseInt(major.courses_list[i].credit);
+        }
+    }
+    return value;
+}
+
+function get_main_GPA(){
+    let list = []
+    for (let i = 0 ; i < major.courses_list.length; i++){
+        if( major.courses_list[i].GPA !== ''){
+            list.push(major.courses_list[i]);
+        }
+    }
+    return get_GPA(list);
+}
+
+function get_No_Remaining_Semesters(){
+    let value = 0 ;
+    for (let i = 0 ; i < semester_list.length; i++){
+        if(semester_list[i].status === 'Later Semester'){
+            value++;
+        }
+    }
+    return value;
 }

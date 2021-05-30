@@ -100,6 +100,7 @@ form {
 .card {
     margin: 15px;
     color: dimgrey;
+    width: 20rem;
     background-color: rgba(58, 59, 64, 0);
     border-radius: 50rem;
 }
@@ -250,3 +251,21 @@ form {
     display: none;
 }
 
+.Edit_Course{
+    background-color: rgba(255, 255, 255, 0.9);
+    margin: 30px;
+    padding: 30px;
+    border-radius: 30px;
+    position: fixed;
+    top: 0;
+    left: 25%;
+    width: 40%;
+    backdrop-filter: blur(3px);
+}
+
+.Edit_Course_hide{
+    display: none;
+}
+tr{
+    vertical-align: middle;
+}
