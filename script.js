@@ -390,6 +390,9 @@ function getCard_innerHTML(semester) {
 }
 
 function display_semester_GPA(semester){
+    if(semester.courses_list.length === 0){
+       return false;
+    }
     for(let i = 0 ; i < semester.courses_list.length; i ++){
         if(semester.courses_list[i].GPA === ''){
             return false;
