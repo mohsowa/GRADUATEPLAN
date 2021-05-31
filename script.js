@@ -394,7 +394,7 @@ function display_semester_GPA(semester){
        return false;
     }
     for(let i = 0 ; i < semester.courses_list.length; i ++){
-        if(semester.courses_list[i].GPA === ''){
+        if( major.courses_list[i].GPA === '' || major.courses_list[i].GPA === undefined){
             return false;
         }
     }
@@ -627,6 +627,9 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
+                            
         `;
     } else if (course.GPA === 'A+') {
         data = `
@@ -640,6 +643,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'A') {
         data = `
@@ -653,6 +658,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'B+') {
         data = `
@@ -666,6 +673,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'B') {
         data = `
@@ -679,6 +688,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'C+') {
         data = `
@@ -692,6 +703,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'C') {
         data = `
@@ -705,6 +718,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'D+') {
         data = `
@@ -718,6 +733,8 @@ function getGPA__innerHTML(course) {
                             <option selected>D+</option>
                             <option>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'D') {
         data = `
@@ -731,6 +748,8 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option selected>D</option>
                             <option>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
         `;
     } else if (course.GPA === 'F') {
         data = `
@@ -744,6 +763,38 @@ function getGPA__innerHTML(course) {
                             <option>D+</option>
                             <option>D</option>
                             <option  selected>F</option>
+                            <option>NP</option>
+                            <option>NF</option>
+        `;
+    }else if (course.GPA === 'NP') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+                            <option selected>NP</option>
+                            <option>NF</option>
+        `;
+    }else if (course.GPA === 'NF') {
+        data = `
+        <option>Choose...</option>
+                            <option>A+</option>
+                            <option>A</option>
+                            <option>B+</option>
+                            <option>B</option>
+                            <option>C+</option>
+                            <option>C</option>
+                            <option>D+</option>
+                            <option>D</option>
+                            <option>F</option>
+                            <option>NP</option>
+                            <option selected>NF</option>
         `;
     }
     return data;
@@ -1231,31 +1282,49 @@ function GPA_4_Point(List){
     let total_CR = 0;
     for (let i = 0 ; i < List.length; i ++){
         if(List[i].GPA !== undefined){
-            total_CR += parseInt(List[i].credit);
+
             if(List[i].GPA === 'A+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((4 * List[i].credit));
             }else if(List[i].GPA === 'A'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((3.75 * List[i].credit));
             }else if(List[i].GPA === 'B+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((3.5 * List[i].credit));
             }else if(List[i].GPA === 'B'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((3 * List[i].credit));
             }else if(List[i].GPA === 'C+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((2.5 * List[i].credit));
             }else if(List[i].GPA === 'C'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((2 * List[i].credit));
             }else if(List[i].GPA === 'D+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((1.5 * List[i].credit));
             }else if(List[i].GPA === 'D'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((1 * List[i].credit));
             }else if(List[i].GPA === 'F'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((0 * List[i].credit));
+            }else if(List[i].GPA === 'NP'){
+
+            }else if(List[i].GPA === 'NF'){
+
             }
         }else{
             return undefined;
         }
     }
-    value = (value / total_CR);
+
+    if (value === 0){
+        value = 0;
+    }else{
+        value = (value / total_CR);
+    }
     return value.toFixed(2);
 }
 
@@ -1264,31 +1333,47 @@ function GPA_5_Point(List){
     let total_CR = 0;
     for (let i = 0 ; i < List.length; i ++){
         if(List[i].GPA !== undefined){
-            total_CR += parseInt(List[i].credit);
             if(List[i].GPA === 'A+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((5 * List[i].credit));
             }else if(List[i].GPA === 'A'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((4.75 * List[i].credit));
             }else if(List[i].GPA === 'B+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((4.5 * List[i].credit));
             }else if(List[i].GPA === 'B'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((4 * List[i].credit));
             }else if(List[i].GPA === 'C+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((3.5 * List[i].credit));
             }else if(List[i].GPA === 'C'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((3 * List[i].credit));
             }else if(List[i].GPA === 'D+'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((2.5 * List[i].credit));
             }else if(List[i].GPA === 'D'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((2 * List[i].credit));
             }else if(List[i].GPA === 'F'){
+                total_CR += parseInt(List[i].credit);
                 value += parseFloat((1 * List[i].credit));
+            }else if(List[i].GPA === 'NP'){
+
+            }else if(List[i].GPA === 'NF'){
+
             }
         }else{
             return undefined;
         }
     }
-    value = (value / total_CR);
+    if (value === 0){
+        value = 0;
+    }else{
+        value = (value / total_CR);
+    }
     return value.toFixed(2);
 }
 
@@ -1303,7 +1388,7 @@ function get_GPA(list){
 function get_GPA_CR(){
     let value = 0 ;
     for (let i = 0 ; i < major.courses_list.length; i++){
-        if( major.courses_list[i].GPA !== ''){
+        if( major.courses_list[i].GPA !== '' && major.courses_list[i].GPA !== 'NP' && major.courses_list[i].GPA !== 'NF' && major.courses_list[i].GPA !== undefined){
             value += parseInt(major.courses_list[i].credit);
         }
     }
@@ -1313,7 +1398,7 @@ function get_GPA_CR(){
 function get_main_GPA(){
     let list = []
     for (let i = 0 ; i < major.courses_list.length; i++){
-        if( major.courses_list[i].GPA !== ''){
+        if( major.courses_list[i].GPA !== '' && major.courses_list[i].GPA !== 'NP' && major.courses_list[i].GPA !== 'NF' && major.courses_list[i].GPA !== undefined){
             list.push(major.courses_list[i]);
         }
     }
