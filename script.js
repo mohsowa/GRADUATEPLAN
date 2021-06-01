@@ -1427,5 +1427,6 @@ function get_No_Remaining_Semesters(){
             value++;
         }
     }
+
     return value;
 }
