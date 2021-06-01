@@ -555,27 +555,33 @@ function new_Course() {
 
     if (complete_process) {
         if ((Number(courseCredit).toFixed() >= 0) && courseCredit != null) {
-            // add to array
-            let course = new Course(courseID, courseName, courseCredit, [coursePreReq1, coursePreReq2, coursePreReq3]);
-            major.courses_list.push(course);
 
-            //saveData
-            localStorage.removeItem('major')
-            localStorage.setItem('major', JSON.stringify(major));
+            if(courseCredit !== ''){
+                // add to array
+                let course = new Course(courseID, courseName, courseCredit, [coursePreReq1, coursePreReq2, coursePreReq3]);
+                major.courses_list.push(course);
 
-            //edit info
-            elm_No_Courses.textContent = Number(major.courses_list.length).toFixed();
-            elm_No_MajorCR.textContent = parseInt(getTotalMajorCR());
+                //saveData
+                localStorage.removeItem('major')
+                localStorage.setItem('major', JSON.stringify(major));
 
-            // add to table on page
-            const elm_display_course = document.getElementById('display_courses');
-            elm_display_course.append(getCourse_innerHTML(course));
+                //edit info
+                elm_No_Courses.textContent = Number(major.courses_list.length).toFixed();
+                elm_No_MajorCR.textContent = parseInt(getTotalMajorCR());
 
-            // close window
-            close_insert_Course();
+                // add to table on page
+                const elm_display_course = document.getElementById('display_courses');
+                elm_display_course.append(getCourse_innerHTML(course));
 
-            //Reload Page
-            location.reload()
+                // close window
+                close_insert_Course();
+
+                //Reload Page
+                location.reload()
+            }else{
+                alert('Course credit field is empty!')
+            }
+
 
         } else {
             alert('Course credit less than 0 !');
@@ -1250,27 +1256,36 @@ document.getElementById("close_edit_Course_btn").addEventListener("click", funct
 
 document.getElementById("edit_course").addEventListener("click", function () {
     const course_id = document.getElementById('e-courseID').value;
-
+    const pre_1 = document.getElementById('e-preR_1').value;
+    const pre_2 = document.getElementById('e-preR_2').value;
+    const pre_3 = document.getElementById('e-preR_3').value;
+    const CR = document.getElementById('e-courseCredit').value;
     for (let i = 0 ; i < major.courses_list.length;i++){
         if (course_id === major.courses_list[i].id){
-            const pre_1 = document.getElementById('e-preR_1').value;
-            const pre_2 = document.getElementById('e-preR_2').value;
-            const pre_3 = document.getElementById('e-preR_3').value;
-            if(pre_1 !== major.courses_list[i].id && pre_2 !== major.courses_list[i].id && pre_3 !== major.courses_list[i].id){
-                major.courses_list[i].name = document.getElementById('e-courseName').value;
-                major.courses_list[i].credit = document.getElementById('e-courseCredit').value;
-                major.courses_list[i].pre_request[0] = document.getElementById('e-preR_1').value;
-                major.courses_list[i].pre_request[1] = document.getElementById('e-preR_2').value;
-                major.courses_list[i].pre_request[2] = document.getElementById('e-preR_3').value;
+            if (CR !== ''){
+                if(CR >= 0){
+                    if(pre_1 !== major.courses_list[i].id && pre_2 !== major.courses_list[i].id && pre_3 !== major.courses_list[i].id){
+                        major.courses_list[i].name = document.getElementById('e-courseName').value;
+                        major.courses_list[i].credit = document.getElementById('e-courseCredit').value;
+                        major.courses_list[i].pre_request[0] = document.getElementById('e-preR_1').value;
+                        major.courses_list[i].pre_request[1] = document.getElementById('e-preR_2').value;
+                        major.courses_list[i].pre_request[2] = document.getElementById('e-preR_3').value;
 
-                localStorage.setItem('major', JSON.stringify(major));
-                location.reload();
+                        localStorage.setItem('major', JSON.stringify(major));
+                        location.reload();
 
-                //const view = document.querySelector('.Edit_Course');
-                //.classList.add('Edit_Course_hide');
-            }else {
-                alert('This course cannot be Pre Request for itself!')
+                        //const view = document.querySelector('.Edit_Course');
+                        //.classList.add('Edit_Course_hide');
+                    }else {
+                        alert('This course cannot be Pre Request for itself!');
+                    }
+                }else{
+                    alert('Course credit less than 0 !');
+                }
+            }else{
+                alert('Course credit field is empty!');
             }
+
         }
     }
 
