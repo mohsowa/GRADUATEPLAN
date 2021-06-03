@@ -26,6 +26,7 @@ class Course {
     pre_request = [];
     Semester = new Semester('temp');
     GPA;
+    status;
 
     constructor(id, name, credit, pre_request) {
         this.id = id;
@@ -47,6 +48,21 @@ class Semester {
 
 }
 
+function sort_element() {
+    major.courses_list.sort(function (a, b) {
+        let nameA = a.id.toUpperCase(); // ignore upper and lowercase
+        let nameB = b.id.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        // names must be equal
+        return 0;
+    });
+}
+
 ///////// variable /////////
 
 let user_name;
@@ -57,6 +73,7 @@ let image;
 
 // check data
 check_all_key_local();
+sort_element();
 ///////// Style - script /////////
 
 // insert course
@@ -252,7 +269,7 @@ elm_GPA_CR.textContent = get_GPA_CR();
 
 //GPA Point
 const elm_GPA = document.getElementById('GPA_Value');
-elm_GPA.textContent = (get_GPA_CR() === 0)?0:get_main_GPA();
+elm_GPA.textContent = (get_GPA_CR() === 0) ? 0 : get_main_GPA();
 
 //display semesters
 display_semesters();
@@ -363,7 +380,7 @@ function getCard_innerHTML(semester) {
     const new_element = document.createElement('div');
     new_element.className = 'col-sm-4 semester_cards';
     new_element.id = `semester_${semester.name}`;
-    if(display_semester_GPA(semester)){
+    if (display_semester_GPA(semester)) {
         new_element.innerHTML = `
                 <div class="card mb-3" style="max-width: 18rem;">
                     <div class="card-header grid-container">
@@ -374,7 +391,7 @@ function getCard_innerHTML(semester) {
                         ${getCourses_getCard_innerHTML(new_element.id)}
                 </div>
     `;
-    }else{
+    } else {
         new_element.innerHTML = `
                 <div class="card mb-3" style="max-width: 18rem;">
                     <div class="card-header grid-container">
@@ -389,12 +406,12 @@ function getCard_innerHTML(semester) {
     return new_element;
 }
 
-function display_semester_GPA(semester){
-    if(semester.courses_list.length === 0){
-       return false;
+function display_semester_GPA(semester) {
+    if (semester.courses_list.length === 0) {
+        return false;
     }
-    for(let i = 0 ; i < semester.courses_list.length; i ++){
-        if( major.courses_list[i].GPA === '' || major.courses_list[i].GPA === undefined){
+    for (let i = 0; i < semester.courses_list.length; i++) {
+        if (major.courses_list[i].GPA === '' || major.courses_list[i].GPA === undefined) {
             return false;
         }
     }
@@ -411,18 +428,18 @@ function get_semester_status(semester) {
 <select class="form-control" id="${semester.name}_status_option" style="background-color: #3375A5; color: white">
         <option selected style="background-color: white">Later Semester</option>
         <option style="background-color: #F58E29; color: white">Current Semester</option>
-        <option style="background-color: #F93644; color: white">Finished Semester</option>
+        <option style="background-color: #26A65B; color: white">Finished Semester</option>
         `;
     } else if (semester.status === 'Current Semester') {
         data += `
 <select class="form-control" id="${semester.name}_status_option" style="background-color: #F58E29; color: white">
         <option style="background-color: #3375A5; color: white">Later Semester</option>
         <option selected style="background-color: white">Current Semester</option>
-        <option style="background-color: #F93644; color: white">Finished Semester</option>
+        <option style="background-color: #26A65B; color: white">Finished Semester</option>
         `;
     } else if (semester.status === 'Finished Semester') {
         data += `
-<select class="form-control" id="${semester.name}_status_option" style="background-color: #F93644; color: white">
+<select class="form-control" id="${semester.name}_status_option" style="background-color: #26A65B; color: white">
         <option style="background-color: #3375A5; color: white">Later Semester</option>
         <option style="background-color: #F58E29; color: white">Current Semester</option>
         <option selected style="background-color: white">Finished Semester</option>
@@ -556,7 +573,7 @@ function new_Course() {
     if (complete_process) {
         if ((Number(courseCredit).toFixed() >= 0) && courseCredit != null) {
 
-            if(courseCredit !== ''){
+            if (courseCredit !== '') {
                 // add to array
                 let course = new Course(courseID, courseName, courseCredit, [coursePreReq1, coursePreReq2, coursePreReq3]);
                 major.courses_list.push(course);
@@ -578,7 +595,7 @@ function new_Course() {
 
                 //Reload Page
                 location.reload()
-            }else{
+            } else {
                 alert('Course credit field is empty!')
             }
 
@@ -611,12 +628,41 @@ function getCourse_innerHTML(course) {
                         </select>
                     </div></td>
                 <td>
+                
                 <div>
                 <button class="btn btn-outline-light" style="margin-top: 8px" id="Edit_${course.id}">Edit</button>
 </div>
 </td>
+<td>${get_course_status(course)}</td>
     `;
     return new_element;
+}
+
+function get_course_status(course) {
+    if (course.Semester.name === 'temp') {
+        course.status = 'Not Assigned';
+        return `<div style="color: white; background-color: #9a1b53; border-radius: 10px; padding: 5px">Not Assigned</div>`
+    } else {
+        for (let i = 0; i < semester_list.length; i++) {
+            if (course.Semester.name === semester_list[i].name) {
+                course.Semester.status = semester_list[i].status;
+            }
+        }
+        if (course.Semester.status === 'Finished Semester') {
+            if (course.GPA === undefined || course.GPA === '') {
+                course.status = 'Need Grading';
+                return `<div style="color: white; background-color: #F58E29; border-radius: 10px; padding: 5px">Need Grading</div>`
+            } else {
+                course.status = 'Finished';
+                return `<div style="color: white; background-color: #26A65B; border-radius: 10px; padding: 5px">Finished</div>`
+            }
+        } else {
+            course.status = 'In Progress';
+            return `<div style="color: white; background-color: #3375A5; border-radius: 10px; padding: 5px">In Progress</div>`
+        }
+    }
+    localStorage.setItem('major', JSON.stringify(major));
+    return course.status
 }
 
 function getGPA__innerHTML(course) {
@@ -772,7 +818,7 @@ function getGPA__innerHTML(course) {
                             <option>NP</option>
                             <option>NF</option>
         `;
-    }else if (course.GPA === 'NP') {
+    } else if (course.GPA === 'NP') {
         data = `
         <option>Choose...</option>
                             <option>A+</option>
@@ -787,7 +833,7 @@ function getGPA__innerHTML(course) {
                             <option selected>NP</option>
                             <option>NF</option>
         `;
-    }else if (course.GPA === 'NF') {
+    } else if (course.GPA === 'NF') {
         data = `
         <option>Choose...</option>
                             <option>A+</option>
@@ -873,33 +919,57 @@ function open_insert_Course() {
 }
 
 function get_courseList_pre() {
-    let data = '<option selected>No PreRequisite</option>';
+    let data = '<option selected>No PreRequisite</option><option>Junior Standing</option><option>Senior Standing</option>';
     for (let i = 0; i < major.courses_list.length; i++) {
         data += `<option>${major.courses_list[i].id}</option>`;
     }
     return data;
 }
 
-function get_courseList_pre_edit(id,pre) {
-    if (pre === 'No PreRequisite'){
-        let data = '<option selected>No PreRequisite</option>';
+function get_courseList_pre_edit(id, pre) {
+    if (pre === 'No PreRequisite') {
+        let data = '<option selected>No PreRequisite</option><option>Junior Standing</option><option>Senior Standing</option>';
         for (let i = 0; i < major.courses_list.length; i++) {
-            if(id !== major.courses_list[i].id){
-                if(pre === major.courses_list[i].id){
+            if (id !== major.courses_list[i].id) {
+                if (pre === major.courses_list[i].id) {
                     data += `<option >${major.courses_list[i].id}</option>`;
-                }else{
+                } else {
                     data += `<option>${major.courses_list[i].id}</option>`;
                 }
             }
         }
         return data;
-    }else{
-        let data = '<option >No PreRequisite</option>';
+    } else if (pre === 'Junior Standing') {
+        let data = '<option>No PreRequisite</option><option selected>Junior Standing</option><option>Senior Standing</option>';
         for (let i = 0; i < major.courses_list.length; i++) {
-            if(id !== major.courses_list[i].id){
-                if(pre === major.courses_list[i].id){
+            if (id !== major.courses_list[i].id) {
+                if (pre === major.courses_list[i].id) {
+                    data += `<option >${major.courses_list[i].id}</option>`;
+                } else {
+                    data += `<option>${major.courses_list[i].id}</option>`;
+                }
+            }
+        }
+        return data;
+    } else if (pre === 'Senior Standing') {
+        let data = '<option>No PreRequisite</option><option>Junior Standing</option><option selected>Senior Standing</option>';
+        for (let i = 0; i < major.courses_list.length; i++) {
+            if (id !== major.courses_list[i].id) {
+                if (pre === major.courses_list[i].id) {
+                    data += `<option >${major.courses_list[i].id}</option>`;
+                } else {
+                    data += `<option>${major.courses_list[i].id}</option>`;
+                }
+            }
+        }
+        return data;
+    } else {
+        let data = '<option >No PreRequisite</option><option>Junior Standing</option><option>Senior Standing</option>';
+        for (let i = 0; i < major.courses_list.length; i++) {
+            if (id !== major.courses_list[i].id) {
+                if (pre === major.courses_list[i].id) {
                     data += `<option selected>${major.courses_list[i].id}</option>`;
-                }else{
+                } else {
                     data += `<option>${major.courses_list[i].id}</option>`;
                 }
             }
@@ -1240,9 +1310,9 @@ function btn_edit_course_Listener() {
             document.getElementById('e-courseCredit').value = major.courses_list[i].credit;
 
             //pre
-            document.getElementById('e-preR_1').innerHTML = get_courseList_pre_edit(major.courses_list[i].id,major.courses_list[i].pre_request[0]);
-            document.getElementById('e-preR_2').innerHTML = get_courseList_pre_edit(major.courses_list[i].id,major.courses_list[i].pre_request[1]);
-            document.getElementById('e-preR_3').innerHTML = get_courseList_pre_edit(major.courses_list[i].id,major.courses_list[i].pre_request[2]);
+            document.getElementById('e-preR_1').innerHTML = get_courseList_pre_edit(major.courses_list[i].id, major.courses_list[i].pre_request[0]);
+            document.getElementById('e-preR_2').innerHTML = get_courseList_pre_edit(major.courses_list[i].id, major.courses_list[i].pre_request[1]);
+            document.getElementById('e-preR_3').innerHTML = get_courseList_pre_edit(major.courses_list[i].id, major.courses_list[i].pre_request[2]);
 
         });
     }
@@ -1260,11 +1330,11 @@ document.getElementById("edit_course").addEventListener("click", function () {
     const pre_2 = document.getElementById('e-preR_2').value;
     const pre_3 = document.getElementById('e-preR_3').value;
     const CR = document.getElementById('e-courseCredit').value;
-    for (let i = 0 ; i < major.courses_list.length;i++){
-        if (course_id === major.courses_list[i].id){
-            if (CR !== ''){
-                if(CR >= 0){
-                    if(pre_1 !== major.courses_list[i].id && pre_2 !== major.courses_list[i].id && pre_3 !== major.courses_list[i].id){
+    for (let i = 0; i < major.courses_list.length; i++) {
+        if (course_id === major.courses_list[i].id) {
+            if (CR !== '') {
+                if (CR >= 0) {
+                    if (pre_1 !== major.courses_list[i].id && pre_2 !== major.courses_list[i].id && pre_3 !== major.courses_list[i].id) {
                         major.courses_list[i].name = document.getElementById('e-courseName').value;
                         major.courses_list[i].credit = document.getElementById('e-courseCredit').value;
                         major.courses_list[i].pre_request[0] = document.getElementById('e-preR_1').value;
@@ -1276,13 +1346,13 @@ document.getElementById("edit_course").addEventListener("click", function () {
 
                         //const view = document.querySelector('.Edit_Course');
                         //.classList.add('Edit_Course_hide');
-                    }else {
+                    } else {
                         alert('This course cannot be Pre Request for itself!');
                     }
-                }else{
+                } else {
                     alert('Course credit less than 0 !');
                 }
-            }else{
+            } else {
                 alert('Course credit field is empty!');
             }
 
@@ -1292,141 +1362,143 @@ document.getElementById("edit_course").addEventListener("click", function () {
 
 });
 
-function GPA_4_Point(List){
+function GPA_4_Point(List) {
     let value = 0;
     let total_CR = 0;
-    for (let i = 0 ; i < List.length; i ++){
-        if(List[i].GPA !== undefined){
+    for (let i = 0; i < List.length; i++) {
+        if (List[i].GPA !== undefined) {
 
-            if(List[i].GPA === 'A+'){
+            if (List[i].GPA === 'A+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((4 * List[i].credit));
-            }else if(List[i].GPA === 'A'){
+            } else if (List[i].GPA === 'A') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((3.75 * List[i].credit));
-            }else if(List[i].GPA === 'B+'){
+            } else if (List[i].GPA === 'B+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((3.5 * List[i].credit));
-            }else if(List[i].GPA === 'B'){
+            } else if (List[i].GPA === 'B') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((3 * List[i].credit));
-            }else if(List[i].GPA === 'C+'){
+            } else if (List[i].GPA === 'C+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((2.5 * List[i].credit));
-            }else if(List[i].GPA === 'C'){
+            } else if (List[i].GPA === 'C') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((2 * List[i].credit));
-            }else if(List[i].GPA === 'D+'){
+            } else if (List[i].GPA === 'D+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((1.5 * List[i].credit));
-            }else if(List[i].GPA === 'D'){
+            } else if (List[i].GPA === 'D') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((1 * List[i].credit));
-            }else if(List[i].GPA === 'F'){
+            } else if (List[i].GPA === 'F') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((0 * List[i].credit));
-            }else if(List[i].GPA === 'NP'){
+            } else if (List[i].GPA === 'NP') {
 
-            }else if(List[i].GPA === 'NF'){
+            } else if (List[i].GPA === 'NF') {
 
             }
-        }else{
+        } else {
             return undefined;
         }
     }
 
-    if (value === 0){
+    if (value === 0) {
         value = 0;
-    }else{
+    } else {
         value = (value / total_CR);
     }
     return value.toFixed(2);
 }
 
-function GPA_5_Point(List){
+function GPA_5_Point(List) {
     let value = 0;
     let total_CR = 0;
-    for (let i = 0 ; i < List.length; i ++){
-        if(List[i].GPA !== undefined){
-            if(List[i].GPA === 'A+'){
+    for (let i = 0; i < List.length; i++) {
+        if (List[i].GPA !== undefined) {
+            if (List[i].GPA === 'A+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((5 * List[i].credit));
-            }else if(List[i].GPA === 'A'){
+            } else if (List[i].GPA === 'A') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((4.75 * List[i].credit));
-            }else if(List[i].GPA === 'B+'){
+            } else if (List[i].GPA === 'B+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((4.5 * List[i].credit));
-            }else if(List[i].GPA === 'B'){
+            } else if (List[i].GPA === 'B') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((4 * List[i].credit));
-            }else if(List[i].GPA === 'C+'){
+            } else if (List[i].GPA === 'C+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((3.5 * List[i].credit));
-            }else if(List[i].GPA === 'C'){
+            } else if (List[i].GPA === 'C') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((3 * List[i].credit));
-            }else if(List[i].GPA === 'D+'){
+            } else if (List[i].GPA === 'D+') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((2.5 * List[i].credit));
-            }else if(List[i].GPA === 'D'){
+            } else if (List[i].GPA === 'D') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((2 * List[i].credit));
-            }else if(List[i].GPA === 'F'){
+            } else if (List[i].GPA === 'F') {
                 total_CR += parseInt(List[i].credit);
                 value += parseFloat((1 * List[i].credit));
-            }else if(List[i].GPA === 'NP'){
+            } else if (List[i].GPA === 'NP') {
 
-            }else if(List[i].GPA === 'NF'){
+            } else if (List[i].GPA === 'NF') {
 
             }
-        }else{
+        } else {
             return undefined;
         }
     }
-    if (value === 0){
+    if (value === 0) {
         value = 0;
-    }else{
+    } else {
         value = (value / total_CR);
     }
     return value.toFixed(2);
 }
 
-function get_GPA(list){
-    if (major.GPA_Point === 4){
+function get_GPA(list) {
+    if (major.GPA_Point === 4) {
         return GPA_4_Point(list);
-    }else{
+    } else {
         return GPA_5_Point(list);
     }
 }
 
-function get_GPA_CR(){
-    let value = 0 ;
-    for (let i = 0 ; i < major.courses_list.length; i++){
-        if( major.courses_list[i].GPA !== '' && major.courses_list[i].GPA !== 'NP' && major.courses_list[i].GPA !== 'NF' && major.courses_list[i].GPA !== undefined){
+function get_GPA_CR() {
+    let value = 0;
+    for (let i = 0; i < major.courses_list.length; i++) {
+        if (major.courses_list[i].GPA === undefined) {
+            major.courses_list[i].GPA = '';
+        }
+        if (major.courses_list[i].GPA !== '' && major.courses_list[i].GPA !== 'NP' && major.courses_list[i].GPA !== 'NF' && major.courses_list[i].GPA !== undefined) {
             value += parseInt(major.courses_list[i].credit);
         }
     }
     return value;
 }
 
-function get_main_GPA(){
+function get_main_GPA() {
     let list = []
-    for (let i = 0 ; i < major.courses_list.length; i++){
-        if( major.courses_list[i].GPA !== '' && major.courses_list[i].GPA !== 'NP' && major.courses_list[i].GPA !== 'NF' && major.courses_list[i].GPA !== undefined){
+    for (let i = 0; i < major.courses_list.length; i++) {
+        if (major.courses_list[i].GPA !== '' && major.courses_list[i].GPA !== 'NP' && major.courses_list[i].GPA !== 'NF' && major.courses_list[i].GPA !== undefined) {
             list.push(major.courses_list[i]);
         }
     }
     return get_GPA(list);
 }
 
-function get_No_Remaining_Semesters(){
-    let value = 0 ;
-    for (let i = 0 ; i < semester_list.length; i++){
-        if(semester_list[i].status === 'Later Semester'){
+function get_No_Remaining_Semesters() {
+    let value = 0;
+    for (let i = 0; i < semester_list.length; i++) {
+        if (semester_list[i].status === 'Later Semester') {
             value++;
         }
     }
-
     return value;
 }
