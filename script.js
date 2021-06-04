@@ -629,7 +629,7 @@ function getCourse_innerHTML(course) {
                 <td>
                 
                 <div>
-                <button class="btn btn-outline-light" style="margin-top: 8px" id="Edit_${course.id}">Edit</button>
+                <button class="btn btn-outline-light"  id="Edit_${course.id}">Edit</button>
 </div>
 </td>
 <td>${get_course_status(course)}</td>
