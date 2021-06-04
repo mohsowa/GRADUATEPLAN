@@ -680,8 +680,9 @@ function display_table() {
     const elm_display_course = document.getElementById('display_courses');
     elm_display_course.innerHTML = null;
     for (let i = 0; i < semester_list.length; i++) {
-        const new_elm = document.createElement('div');
-        new_elm.innerHTML = `
+        if(semester_list[i].courses_list.length !== 0){
+            const new_elm = document.createElement('div');
+            new_elm.innerHTML = `
         <div style="color: white; font-size: 18pt">Term | ${semester_list[i].name}</div>
         <hr id="hr-t">
         <table class="table table-borderless">
@@ -700,11 +701,12 @@ function display_table() {
             <tbody id = "tbody_${semester_list[i].name}">
         </tbody>
         </table>`;
-        elm_display_course.append(new_elm);
+            elm_display_course.append(new_elm);
 
-        let element = document.getElementById(`tbody_${semester_list[i].name}`)
-        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-            element.append(getCourse_innerHTML(semester_list[i].courses_list[j]));
+            let element = document.getElementById(`tbody_${semester_list[i].name}`)
+            for (let j = 0; j < semester_list[i].courses_list.length; j++) {
+                element.append(getCourse_innerHTML(semester_list[i].courses_list[j]));
+            }
         }
     }
 
