@@ -1493,6 +1493,7 @@ function btn_edit_course_Listener_2() {
 document.getElementById("close_edit_Course_btn").addEventListener("click", function () {
     const view = document.querySelector('.Edit_Course');
     view.classList.add('Edit_Course_hide');
+
 });
 
 document.getElementById("edit_course").addEventListener("click", function () {
