@@ -26,7 +26,6 @@ class Course {
     pre_request = [];
     Semester = new Semester('temp');
     GPA;
-    status;
 
     constructor(id, name, credit, pre_request) {
         this.id = id;
@@ -640,8 +639,15 @@ function getCourse_innerHTML(course) {
 
 function get_preRequest_innerHTML(course){
     let data = ``;
+
+    for (let i = 0 ; i < course.pre_request.length; i++){
+        if (course.pre_request[i] === undefined){
+            course.pre_request[i] = 'No PreRequisite';
+        }
+    }
+
     if (course.pre_request[0] !== 'No PreRequisite'){
-        console.log('here 1')
+
         if (data.length !== 0){
             data += ` | ${course.pre_request[0]}`;
         }else{
@@ -756,8 +762,7 @@ function display_table() {
 
 function get_course_status(course) {
     if (course.Semester.name === 'temp') {
-        course.status = 'Not Assigned';
-        return `<div style="color: white; background-color: #9a1b53; border-radius: 10px; padding: 5px; margin: 5px;">Not Assigned</div>`
+        return `<div style="color: white; background-color: #9a1b53; border-radius: 10px; padding: 5px">Not Assigned</div>`
     } else {
         for (let i = 0; i < semester_list.length; i++) {
             if (course.Semester.name === semester_list[i].name) {
@@ -766,15 +771,12 @@ function get_course_status(course) {
         }
         if (course.Semester.status === 'Finished Semester') {
             if (course.GPA === undefined || course.GPA === '') {
-                course.status = 'Need Grading';
-                return `<div style="color: white; background-color: #F58E29; border-radius: 10px; padding: 5px; margin: 5px;">Need Grading</div>`
+                return `<div style="color: white; background-color: #F58E29; border-radius: 10px; padding: 5px">Need Grading</div>`
             } else {
-                course.status = 'Finished';
-                return `<div style="color: white; background-color: #26A65B; border-radius: 10px; padding: 5px; margin: 5px;">Finished</div>`
+                return `<div style="color: white; background-color: #26A65B; border-radius: 10px; padding: 5px">Finished</div>`
             }
         } else {
-            course.status = 'In Progress';
-            return `<div style="color: white; background-color: #3375A5; border-radius: 10px; padding: 5px; margin: 5px;">In Progress</div>`
+            return `<div style="color: white; background-color: #3375A5; border-radius: 10px; padding: 5px">In Progress</div>`
         }
     }
     localStorage.setItem('major', JSON.stringify(major));
@@ -1361,25 +1363,7 @@ function add_course_to_semester_Listener() {
     }
 }
 
-function assign_GPA_to_course() {
-    for (let i = 0; i < semester_list.length; i++){
-        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-            let temp_id = "GPA_" + semester_list[i].courses_list[j].id;
-            if(document.getElementById(temp_id) !== null){
-                document.getElementById(temp_id).addEventListener("change", function () {
-                    let temp_GPA = document.getElementById(temp_id).value;
-                    if (temp_GPA !== "Choose...") {
-                        major.courses_list[i].GPA = document.getElementById(temp_id).value
-                    } else {
-                        major.courses_list[i].GPA = '';
-                    }
-                    localStorage.setItem('major', JSON.stringify(major));
-                    location.reload();
-                });
-            }
-        }
-    }
-}
+
 
 function semester_status_Listener() {
     for (let i = 0; i < semester_list.length; i++) {
@@ -1405,35 +1389,6 @@ function semester_status_Listener() {
     }
 }
 
-function btn_edit_course_Listener() {
-    for (let i = 0; i < semester_list.length; i++){
-        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-            let temp_id = "Edit_" + semester_list[i].courses_list[j].id;
-            if(document.getElementById(temp_id) !== null){
-                document.getElementById(temp_id).addEventListener("click", function () {
-                    const view = document.querySelector('.Edit_Course');
-                    view.classList.remove('Edit_Course_hide');
-
-                    // get values
-                    //Id
-                    document.getElementById('e-courseID').value = major.courses_list[i].id;
-
-                    //Name
-                    document.getElementById('e-courseName').value = major.courses_list[i].name;
-
-                    //Credit
-                    document.getElementById('e-courseCredit').value = major.courses_list[i].credit;
-
-                    //pre
-                    document.getElementById('e-preR_1').innerHTML = get_courseList_pre_edit(major.courses_list[i].id, major.courses_list[i].pre_request[0]);
-                    document.getElementById('e-preR_2').innerHTML = get_courseList_pre_edit(major.courses_list[i].id, major.courses_list[i].pre_request[1]);
-                    document.getElementById('e-preR_3').innerHTML = get_courseList_pre_edit(major.courses_list[i].id, major.courses_list[i].pre_request[2]);
-
-                });
-            }
-        }
-    }
-}
 
 function add_course_to_semester_Listener_2() {
     for (let i = 0; i < major.courses_list.length; i++) {
@@ -1441,6 +1396,26 @@ function add_course_to_semester_Listener_2() {
         document.getElementById(temp_id).addEventListener("change", function () {
             add_course_to_semester(temp_id);
         });
+    }
+}
+
+function assign_GPA_to_course() {
+    for (let i = 0; i < semester_list.length; i++){
+        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
+            let temp_id = "GPA_" + semester_list[i].courses_list[j].id;
+            if(document.getElementById(temp_id) !== null){
+                document.getElementById(temp_id).addEventListener("change", function () {
+                    let temp_GPA = document.getElementById(temp_id).value;
+                    if (temp_GPA !== "Choose...") {
+                        semester_list[i].courses_list[j].GPA = document.getElementById(temp_id).value
+                    } else {
+                        semester_list[i].courses_list[j].GPA = '';
+                    }
+                    localStorage.setItem('major', JSON.stringify(major));
+                    location.reload();
+                });
+            }
+        }
     }
 }
 
@@ -1460,6 +1435,34 @@ function assign_GPA_to_course_2() {
     }
 }
 
+function btn_edit_course_Listener() {
+    for (let i = 0; i < semester_list.length; i++){
+        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
+            let temp_id = "Edit_" + semester_list[i].courses_list[j].id;
+                document.getElementById(temp_id).addEventListener("click", function () {
+                    const view = document.querySelector('.Edit_Course');
+                    view.classList.remove('Edit_Course_hide');
+
+                    // get values
+                    //Id
+                    document.getElementById('e-courseID').value = semester_list[i].courses_list[j].id;
+
+                    //Name
+                    document.getElementById('e-courseName').value = semester_list[i].courses_list[j].name;
+
+                    //Credit
+                    document.getElementById('e-courseCredit').value = semester_list[i].courses_list[j].credit;
+
+                    //pre
+                    document.getElementById('e-preR_1').innerHTML = get_courseList_pre_edit(semester_list[i].courses_list[j].id, semester_list[i].courses_list[j].pre_request[0]);
+                    document.getElementById('e-preR_2').innerHTML = get_courseList_pre_edit(semester_list[i].courses_list[j].id, semester_list[i].courses_list[j].pre_request[1]);
+                    document.getElementById('e-preR_3').innerHTML = get_courseList_pre_edit(semester_list[i].courses_list[j].id, semester_list[i].courses_list[j].pre_request[2]);
+
+                });
+
+        }
+    }
+}
 function btn_edit_course_Listener_2() {
     for (let i = 0; i < major.courses_list.length; i++) {
         let temp_id = "Edit_" + major.courses_list[i].id;
