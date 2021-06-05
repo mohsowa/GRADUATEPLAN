@@ -1392,7 +1392,6 @@ function add_course_to_semester_Listener() {
 }
 
 
-
 function assign_GPA_to_course() {
     for (let i = 0; i < major.courses_list.length; i++) {
         let temp_id = "GPA_" + major.courses_list[i].id;
@@ -1408,7 +1407,6 @@ function assign_GPA_to_course() {
         });
     }
 }
-
 
 function btn_edit_course_Listener() {
     for (let i = 0; i < major.courses_list.length; i++) {
@@ -1621,3 +1619,69 @@ function get_No_Remaining_Semesters() {
     }
     return value;
 }
+
+// Export | Import Data
+function export_data(){
+    let d_user_name = JSON.parse(localStorage.getItem('user'));
+    let d_semester_list = JSON.parse(localStorage.getItem('semester_list'));
+    let d_major = JSON.parse(localStorage.getItem('major'));
+    let data_save = [d_user_name,d_semester_list,d_major];
+
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data_save));
+
+    var a = document.createElement('a');
+    a.href = 'data:' + data;
+    a.download = 'Graduate Plan Data.json';
+    a.click();
+}
+
+document.getElementById("export_data").addEventListener("click", function () {
+    export_data()
+});
+
+document.getElementById('import_data').addEventListener("click", function (){
+    const welcome_window = document.querySelector('.import_w');
+    welcome_window.classList.remove('import_w_hide');
+})
+
+document.getElementById('close_import_w_btn').addEventListener("click", function (){
+    const welcome_window = document.querySelector('.import_w');
+    welcome_window.classList.add('import_w_hide');
+})
+
+document.getElementById('file-data').addEventListener("change", function (){
+ let elm = document.getElementById('file-data').files;
+ let file = elm[0];
+    if (!(file.type==='application/json')) {
+        alert('Wrong file type! Only JSON type accepted.');
+        const welcome_window = document.querySelector('.import_w');
+        welcome_window.classList.add('import_w_hide');
+        elm = null
+        return
+    }
+
+
+    let fileReader = new FileReader();
+    fileReader.onload = function(e) {
+        var content = e.target.result;
+        var data = JSON.parse(content); // Array of Objects.
+
+        if(data.length !== 3 ){
+           alert ('Wrong file uploaded !');
+           return;
+        }else{
+            localStorage.setItem('user', JSON.stringify(data[0]));
+            localStorage.setItem('semester_list', JSON.stringify(data[1]));
+            localStorage.setItem('major', JSON.stringify(data[2]));
+
+            alert('Data loaded successfully !');
+            location.reload();
+        }
+    };
+
+    fileReader.readAsText(file);
+
+
+
+
+})
