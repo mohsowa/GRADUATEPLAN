@@ -484,8 +484,14 @@ function delete_semester(id) {
     let complete_proses = false;
     for (let i = 0; i < semester_list.length; i++) {
         if (semester_name === semester_list[i].name) {
-            complete_proses = true;
-            break;
+            if (semester_list[i].courses_list.length !== 0){
+                complete_proses = false;
+                alert('This Semester linked with other courses! Remove them first.');
+                return;
+            }else{
+                complete_proses = true;
+                break;
+            }
         }
     }
 
@@ -674,7 +680,6 @@ function get_preRequest_innerHTML(course){
     }
     return data;
 }
-
 
 function display_table() {
     const elm_display_course = document.getElementById('display_courses');
