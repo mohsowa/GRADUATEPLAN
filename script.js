@@ -704,8 +704,10 @@ function display_table() {
             elm_display_course.append(new_elm);
 
             let element = document.getElementById(`tbody_${semester_list[i].name}`)
-            for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-                element.append(getCourse_innerHTML(semester_list[i].courses_list[j]));
+            for (let j = 0; j < major.courses_list.length; j++) {
+                if (major.courses_list[j].Semester.name === semester_list[i].name){
+                    element.append(getCourse_innerHTML(major.courses_list[j]));
+                }
             }
         }
     }
@@ -749,14 +751,7 @@ function display_table() {
             }
         }
 
-
-       add_course_to_semester_Listener_2();
-        assign_GPA_to_course_2();
-        btn_edit_course_Listener_2();
-
     }
-
-
     add_course_to_semester_Listener();
     assign_GPA_to_course();
     btn_edit_course_Listener();
@@ -1350,18 +1345,7 @@ document.getElementById("delete_course_option").addEventListener("change", funct
     delete_course(this.value);
 });
 
-function add_course_to_semester_Listener() {
-    for (let i = 0; i < semester_list.length; i++){
-        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-            let temp_id = "option_" + semester_list[i].courses_list[j].id;
-            if(document.getElementById(temp_id) !== null){
-                document.getElementById(temp_id).addEventListener("change", function () {
-                    add_course_to_semester(temp_id);
-                });
-            }
-        }
-    }
-}
+
 
 
 
@@ -1390,7 +1374,7 @@ function semester_status_Listener() {
 }
 
 
-function add_course_to_semester_Listener_2() {
+function add_course_to_semester_Listener() {
     for (let i = 0; i < major.courses_list.length; i++) {
         let temp_id = "option_" + major.courses_list[i].id;
         document.getElementById(temp_id).addEventListener("change", function () {
@@ -1399,27 +1383,9 @@ function add_course_to_semester_Listener_2() {
     }
 }
 
-function assign_GPA_to_course() {
-    for (let i = 0; i < semester_list.length; i++){
-        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-            let temp_id = "GPA_" + semester_list[i].courses_list[j].id;
-            if(document.getElementById(temp_id) !== null){
-                document.getElementById(temp_id).addEventListener("change", function () {
-                    let temp_GPA = document.getElementById(temp_id).value;
-                    if (temp_GPA !== "Choose...") {
-                        semester_list[i].courses_list[j].GPA = document.getElementById(temp_id).value
-                    } else {
-                        semester_list[i].courses_list[j].GPA = '';
-                    }
-                    localStorage.setItem('major', JSON.stringify(major));
-                    location.reload();
-                });
-            }
-        }
-    }
-}
 
-function assign_GPA_to_course_2() {
+
+function assign_GPA_to_course() {
     for (let i = 0; i < major.courses_list.length; i++) {
         let temp_id = "GPA_" + major.courses_list[i].id;
         document.getElementById(temp_id).addEventListener("change", function () {
@@ -1435,35 +1401,8 @@ function assign_GPA_to_course_2() {
     }
 }
 
+
 function btn_edit_course_Listener() {
-    for (let i = 0; i < semester_list.length; i++){
-        for (let j = 0; j < semester_list[i].courses_list.length; j++) {
-            let temp_id = "Edit_" + semester_list[i].courses_list[j].id;
-                document.getElementById(temp_id).addEventListener("click", function () {
-                    const view = document.querySelector('.Edit_Course');
-                    view.classList.remove('Edit_Course_hide');
-
-                    // get values
-                    //Id
-                    document.getElementById('e-courseID').value = semester_list[i].courses_list[j].id;
-
-                    //Name
-                    document.getElementById('e-courseName').value = semester_list[i].courses_list[j].name;
-
-                    //Credit
-                    document.getElementById('e-courseCredit').value = semester_list[i].courses_list[j].credit;
-
-                    //pre
-                    document.getElementById('e-preR_1').innerHTML = get_courseList_pre_edit(semester_list[i].courses_list[j].id, semester_list[i].courses_list[j].pre_request[0]);
-                    document.getElementById('e-preR_2').innerHTML = get_courseList_pre_edit(semester_list[i].courses_list[j].id, semester_list[i].courses_list[j].pre_request[1]);
-                    document.getElementById('e-preR_3').innerHTML = get_courseList_pre_edit(semester_list[i].courses_list[j].id, semester_list[i].courses_list[j].pre_request[2]);
-
-                });
-
-        }
-    }
-}
-function btn_edit_course_Listener_2() {
     for (let i = 0; i < major.courses_list.length; i++) {
         let temp_id = "Edit_" + major.courses_list[i].id;
         document.getElementById(temp_id).addEventListener("click", function () {
