@@ -60,6 +60,9 @@
         <div>
             <button class="btn btn-dark" type="reset" id="reset_btn">Reset All Data</button>
             <button class="btn btn-outline-light" type="reset" id="color_btn">Color Mode</button>
+            <button class="btn btn-outline-light" type="reset" id="export_data">Export Data</button>
+            <button class="btn btn-outline-light" type="reset" id="import_data">Import Data</button>
+
         </div>
 
     </div>
@@ -253,6 +256,15 @@
         </button>
     </div>
     <!-- endChange color mode -->
+
+    <!-- import file-->
+    <div class="import_w import_w_hide">
+        <h4>Import Data</h4>
+        <input class="form-control" type="file" id="file-data" accept="application/json">
+        <button type="button" class="btn btn-outline-secondary" id="close_import_w_btn" style="margin-top: 10px">close
+        </button>
+    </div>
+    <!-- end import file -->
 
 </div>
 
