@@ -26,6 +26,7 @@ class Course {
     pre_request = [];
     Semester = new Semester('temp');
     GPA;
+    status;
 
     constructor(id, name, credit, pre_request) {
         this.id = id;
@@ -611,7 +612,7 @@ function getCourse_innerHTML(course) {
                 <td>${course.id}</td>
                 <td>${course.name}</td>
                 <td>${course.credit}</td>
-                <td>${get_preRequest_innerHTML(course)}</td>
+                <td>${course.pre_request[0]}, ${course.pre_request[1]} , ${course.pre_request[2]}</td>
                 <td>
                     <div class="form-group col-">
                         <select id="option_${course.id}" class="form-control"
@@ -629,7 +630,7 @@ function getCourse_innerHTML(course) {
                 <td>
                 
                 <div>
-                <button class="btn btn-outline-light"  id="Edit_${course.id}">Edit</button>
+                <button class="btn btn-outline-light" style="margin-top: 8px" id="Edit_${course.id}">Edit</button>
 </div>
 </td>
 <td>${get_course_status(course)}</td>
@@ -637,128 +638,9 @@ function getCourse_innerHTML(course) {
     return new_element;
 }
 
-function get_preRequest_innerHTML(course){
-    let data = ``;
-
-    for (let i = 0 ; i < course.pre_request.length; i++){
-        if (course.pre_request[i] === undefined){
-            course.pre_request[i] = 'No PreRequisite';
-        }
-    }
-
-    if (course.pre_request[0] !== 'No PreRequisite'){
-
-        if (data.length !== 0){
-            data += ` | ${course.pre_request[0]}`;
-        }else{
-            data += `${course.pre_request[0]}`;
-        }
-    }
-    if ( course.pre_request[1] !== 'No PreRequisite'){
-        if (data.length !== 0){
-            data += ` | ${course.pre_request[1]}`;
-        }else{
-            data += `${course.pre_request[1]}`;
-        }
-    }
-    if (course.pre_request[2] !== 'No PreRequisite'){
-        if (data.length !== 0){
-            data += ` | ${course.pre_request[2]}`;
-        }else{
-            data += `${course.pre_request[2]}`;
-        }
-    }
-
-    if(data.length === 0){
-        data += `No PreRequisite`;
-    }
-    return data;
-}
-
-
-function display_table() {
-    const elm_display_course = document.getElementById('display_courses');
-    elm_display_course.innerHTML = null;
-    for (let i = 0; i < semester_list.length; i++) {
-        if(semester_list[i].courses_list.length !== 0){
-            const new_elm = document.createElement('div');
-            new_elm.innerHTML = `
-        <div style="color: white; font-size: 18pt">Term | ${semester_list[i].name}</div>
-        <hr id="hr-t">
-        <table class="table table-borderless">
-        <thead>
-            <tr style="background-color: rgba(255,255,255,0.3);">
-                <th scope="col">Course ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Credit</th>
-                <th scope="col">Pre Request</th>
-                <th scope="col">Semester</th>
-                <th scope="col">Grade</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Status</th>
-            </tr>
-            </thead>
-            <tbody id = "tbody_${semester_list[i].name}">
-        </tbody>
-        </table>`;
-            elm_display_course.append(new_elm);
-
-            let element = document.getElementById(`tbody_${semester_list[i].name}`)
-            for (let j = 0; j < major.courses_list.length; j++) {
-                if (major.courses_list[j].Semester.name === semester_list[i].name){
-                    element.append(getCourse_innerHTML(major.courses_list[j]));
-                }
-            }
-        }
-    }
-
-    let not_assigned_courses = false;
-    for (let i = 0; i < major.courses_list.length; i++){
-        if(major.courses_list[i].Semester.name === 'temp'){
-            not_assigned_courses = true;
-           break;
-        }
-    }
-
-    if(not_assigned_courses){
-        const new_elm = document.createElement('div');
-        new_elm.innerHTML = `
-        <div style="color: white; font-size: 18pt">Not Assigned Courses</div>
-        <hr id="hr-t">
-        <table class="table table-borderless">
-        <thead>
-            <tr style="background-color: rgba(255,255,255,0.3);">
-                <th scope="col">Course ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Credit</th>
-                <th scope="col">Pre Request</th>
-                <th scope="col">Semester</th>
-                <th scope="col">Grade</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Status</th>
-            </tr>
-            </thead>
-            <tbody id = "tbody_not_assigned_courses">
-        </tbody>
-        </table>`;
-        elm_display_course.append(new_elm);
-
-        let element = document.getElementById(`tbody_not_assigned_courses`);
-
-        for (let i = 0; i < major.courses_list.length; i++){
-            if(major.courses_list[i].Semester.name === 'temp') {
-                element.append(getCourse_innerHTML(major.courses_list[i]));
-            }
-        }
-
-    }
-    add_course_to_semester_Listener();
-    assign_GPA_to_course();
-    btn_edit_course_Listener();
-}
-
 function get_course_status(course) {
     if (course.Semester.name === 'temp') {
+        course.status = 'Not Assigned';
         return `<div style="color: white; background-color: #9a1b53; border-radius: 10px; padding: 5px">Not Assigned</div>`
     } else {
         for (let i = 0; i < semester_list.length; i++) {
@@ -768,14 +650,19 @@ function get_course_status(course) {
         }
         if (course.Semester.status === 'Finished Semester') {
             if (course.GPA === undefined || course.GPA === '') {
+                course.status = 'Need Grading';
                 return `<div style="color: white; background-color: #F58E29; border-radius: 10px; padding: 5px">Need Grading</div>`
             } else {
+                course.status = 'Finished';
                 return `<div style="color: white; background-color: #26A65B; border-radius: 10px; padding: 5px">Finished</div>`
             }
         } else {
+            course.status = 'In Progress';
             return `<div style="color: white; background-color: #3375A5; border-radius: 10px; padding: 5px">In Progress</div>`
         }
     }
+    localStorage.setItem('major', JSON.stringify(major));
+    return course.status
 }
 
 function getGPA__innerHTML(course) {
@@ -985,6 +872,16 @@ function getOption_getCourse_innerHTML(semester) {
     return data;
 }
 
+function display_table() {
+    const elm_display_course = document.getElementById('display_courses');
+    elm_display_course.innerHTML = null;
+    for (let i = 0; i < major.courses_list.length; i++) {
+        elm_display_course.append(getCourse_innerHTML(major.courses_list[i]));
+    }
+    add_course_to_semester_Listener();
+    assign_GPA_to_course();
+    btn_edit_course_Listener();
+}
 
 function add_course_to_semester(id) {
     let temp_id = id.substr(7);
@@ -1152,6 +1049,7 @@ function delete_course_h(course) {
             new_array.push(major.courses_list[i]);
         }
     }
+    console.log(new_array)
     major.courses_list = new_array;
 }
 
@@ -1345,9 +1243,30 @@ document.getElementById("delete_course_option").addEventListener("change", funct
     delete_course(this.value);
 });
 
+function add_course_to_semester_Listener() {
+    for (let i = 0; i < major.courses_list.length; i++) {
+        let temp_id = "option_" + major.courses_list[i].id;
+        document.getElementById(temp_id).addEventListener("change", function () {
+            add_course_to_semester(temp_id);
+        });
+    }
+}
 
-
-
+function assign_GPA_to_course() {
+    for (let i = 0; i < major.courses_list.length; i++) {
+        let temp_id = "GPA_" + major.courses_list[i].id;
+        document.getElementById(temp_id).addEventListener("change", function () {
+            let temp_GPA = document.getElementById(temp_id).value;
+            if (temp_GPA !== "Choose...") {
+                major.courses_list[i].GPA = document.getElementById(temp_id).value
+            } else {
+                major.courses_list[i].GPA = '';
+            }
+            localStorage.setItem('major', JSON.stringify(major));
+            location.reload();
+        });
+    }
+}
 
 function semester_status_Listener() {
     for (let i = 0; i < semester_list.length; i++) {
@@ -1372,35 +1291,6 @@ function semester_status_Listener() {
 
     }
 }
-
-
-function add_course_to_semester_Listener() {
-    for (let i = 0; i < major.courses_list.length; i++) {
-        let temp_id = "option_" + major.courses_list[i].id;
-        document.getElementById(temp_id).addEventListener("change", function () {
-            add_course_to_semester(temp_id);
-        });
-    }
-}
-
-
-
-function assign_GPA_to_course() {
-    for (let i = 0; i < major.courses_list.length; i++) {
-        let temp_id = "GPA_" + major.courses_list[i].id;
-        document.getElementById(temp_id).addEventListener("change", function () {
-            let temp_GPA = document.getElementById(temp_id).value;
-            if (temp_GPA !== "Choose...") {
-                major.courses_list[i].GPA = document.getElementById(temp_id).value
-            } else {
-                major.courses_list[i].GPA = '';
-            }
-            localStorage.setItem('major', JSON.stringify(major));
-            location.reload();
-        });
-    }
-}
-
 
 function btn_edit_course_Listener() {
     for (let i = 0; i < major.courses_list.length; i++) {
@@ -1432,7 +1322,6 @@ function btn_edit_course_Listener() {
 document.getElementById("close_edit_Course_btn").addEventListener("click", function () {
     const view = document.querySelector('.Edit_Course');
     view.classList.add('Edit_Course_hide');
-
 });
 
 document.getElementById("edit_course").addEventListener("click", function () {
