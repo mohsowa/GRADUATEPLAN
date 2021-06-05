@@ -535,6 +535,9 @@ function delete_semester(id) {
         //display semester
         display_table();
 
+        //display message
+        alert("The Semester deleted successfully !");
+
         //save data
         localStorage.removeItem('semester_list');
         localStorage.setItem('semester_list', JSON.stringify(semester_list));
