@@ -1695,7 +1695,6 @@ document.getElementById('file-data').addEventListener("change", function () {
 
         }
     };
-
     fileReader.readAsText(file);
 
 
