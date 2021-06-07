@@ -407,12 +407,23 @@ function getCard_innerHTML(semester) {
 
 function display_semester_GPA(semester) {
     if (semester.courses_list.length === 0) {
+
         return false;
     }
     for (let i = 0; i < semester.courses_list.length; i++) {
-        if (major.courses_list[i].GPA === '' || major.courses_list[i].GPA === undefined) {
-            return false;
+        for (let j = 0 ; j < major.courses_list.length; j ++){
+            if (major.courses_list[j].id === semester.courses_list[i].id){
+                if (major.courses_list[j].GPA === '' || major.courses_list[j].GPA === undefined) {
+                    if (major.courses_list[j].GPA === undefined){
+                        major.courses_list[j].GPA = '';
+                    }
+                    console.log(semester.name);
+                    console.log(major.courses_list[j].GPA);
+                    return false;
+                }
+            }
         }
+
     }
     return true;
 }
@@ -484,11 +495,11 @@ function delete_semester(id) {
     let complete_proses = false;
     for (let i = 0; i < semester_list.length; i++) {
         if (semester_name === semester_list[i].name) {
-            if (semester_list[i].courses_list.length !== 0){
+            if (semester_list[i].courses_list.length !== 0) {
                 complete_proses = false;
                 alert('This Semester linked with other courses! Remove them first.');
                 return;
-            }else{
+            } else {
                 complete_proses = true;
                 break;
             }
@@ -646,39 +657,39 @@ function getCourse_innerHTML(course) {
     return new_element;
 }
 
-function get_preRequest_innerHTML(course){
+function get_preRequest_innerHTML(course) {
     let data = ``;
 
-    for (let i = 0 ; i < course.pre_request.length; i++){
-        if (course.pre_request[i] === undefined){
+    for (let i = 0; i < course.pre_request.length; i++) {
+        if (course.pre_request[i] === undefined) {
             course.pre_request[i] = 'No PreRequisite';
         }
     }
 
-    if (course.pre_request[0] !== 'No PreRequisite'){
+    if (course.pre_request[0] !== 'No PreRequisite') {
 
-        if (data.length !== 0){
+        if (data.length !== 0) {
             data += ` | ${course.pre_request[0]}`;
-        }else{
+        } else {
             data += `${course.pre_request[0]}`;
         }
     }
-    if ( course.pre_request[1] !== 'No PreRequisite'){
-        if (data.length !== 0){
+    if (course.pre_request[1] !== 'No PreRequisite') {
+        if (data.length !== 0) {
             data += ` | ${course.pre_request[1]}`;
-        }else{
+        } else {
             data += `${course.pre_request[1]}`;
         }
     }
-    if (course.pre_request[2] !== 'No PreRequisite'){
-        if (data.length !== 0){
+    if (course.pre_request[2] !== 'No PreRequisite') {
+        if (data.length !== 0) {
             data += ` | ${course.pre_request[2]}`;
-        }else{
+        } else {
             data += `${course.pre_request[2]}`;
         }
     }
 
-    if(data.length === 0){
+    if (data.length === 0) {
         data += `No PreRequisite`;
     }
     return data;
@@ -688,7 +699,7 @@ function display_table() {
     const elm_display_course = document.getElementById('display_courses');
     elm_display_course.innerHTML = null;
     for (let i = 0; i < semester_list.length; i++) {
-        if(semester_list[i].courses_list.length !== 0){
+        if (semester_list[i].courses_list.length !== 0) {
             const new_elm = document.createElement('div');
             new_elm.innerHTML = `
         <div style="color: white; font-size: 18pt">Term | ${semester_list[i].name}</div>
@@ -713,7 +724,7 @@ function display_table() {
 
             let element = document.getElementById(`tbody_${semester_list[i].name}`)
             for (let j = 0; j < major.courses_list.length; j++) {
-                if (major.courses_list[j].Semester.name === semester_list[i].name){
+                if (major.courses_list[j].Semester.name === semester_list[i].name) {
                     element.append(getCourse_innerHTML(major.courses_list[j]));
                 }
             }
@@ -721,14 +732,14 @@ function display_table() {
     }
 
     let not_assigned_courses = false;
-    for (let i = 0; i < major.courses_list.length; i++){
-        if(major.courses_list[i].Semester.name === 'temp'){
+    for (let i = 0; i < major.courses_list.length; i++) {
+        if (major.courses_list[i].Semester.name === 'temp') {
             not_assigned_courses = true;
-           break;
+            break;
         }
     }
 
-    if(not_assigned_courses){
+    if (not_assigned_courses) {
         const new_elm = document.createElement('div');
         new_elm.innerHTML = `
         <div style="color: white; font-size: 18pt">Not Assigned Courses</div>
@@ -753,8 +764,8 @@ function display_table() {
 
         let element = document.getElementById(`tbody_not_assigned_courses`);
 
-        for (let i = 0; i < major.courses_list.length; i++){
-            if(major.courses_list[i].Semester.name === 'temp') {
+        for (let i = 0; i < major.courses_list.length; i++) {
+            if (major.courses_list[i].Semester.name === 'temp') {
                 element.append(getCourse_innerHTML(major.courses_list[i]));
             }
         }
@@ -1354,9 +1365,6 @@ document.getElementById("delete_course_option").addEventListener("change", funct
 });
 
 
-
-
-
 function semester_status_Listener() {
     for (let i = 0; i < semester_list.length; i++) {
         const temp_id = (semester_list[i].name) + '_status_option';
@@ -1527,7 +1535,7 @@ function GPA_4_Point(List) {
     } else {
         value = (value / total_CR);
     }
-    return value.toFixed(2);
+    return value.toFixed(3);
 }
 
 function GPA_5_Point(List) {
@@ -1576,7 +1584,7 @@ function GPA_5_Point(List) {
     } else {
         value = (value / total_CR);
     }
-    return value.toFixed(2);
+    return value.toFixed(3);
 }
 
 function get_GPA(list) {
@@ -1612,6 +1620,7 @@ function get_main_GPA() {
 
 function get_No_Remaining_Semesters() {
     let value = 0;
+    if (semester_list.length !== null){}
     for (let i = 0; i < semester_list.length; i++) {
         if (semester_list[i].status === 'Later Semester') {
             value++;
@@ -1621,11 +1630,11 @@ function get_No_Remaining_Semesters() {
 }
 
 // Export | Import Data
-function export_data(){
+function export_data() {
     let d_user_name = JSON.parse(localStorage.getItem('user'));
     let d_semester_list = JSON.parse(localStorage.getItem('semester_list'));
     let d_major = JSON.parse(localStorage.getItem('major'));
-    let data_save = [d_user_name,d_semester_list,d_major];
+    let data_save = [d_user_name, d_semester_list, d_major];
 
     var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data_save));
 
@@ -1639,20 +1648,20 @@ document.getElementById("export_data").addEventListener("click", function () {
     export_data()
 });
 
-document.getElementById('import_data').addEventListener("click", function (){
+document.getElementById('import_data').addEventListener("click", function () {
     const welcome_window = document.querySelector('.import_w');
     welcome_window.classList.remove('import_w_hide');
 })
 
-document.getElementById('close_import_w_btn').addEventListener("click", function (){
+document.getElementById('close_import_w_btn').addEventListener("click", function () {
     const welcome_window = document.querySelector('.import_w');
     welcome_window.classList.add('import_w_hide');
 })
 
-document.getElementById('file-data').addEventListener("change", function (){
- let elm = document.getElementById('file-data').files;
- let file = elm[0];
-    if (!(file.type==='application/json')) {
+document.getElementById('file-data').addEventListener("change", function () {
+    let elm = document.getElementById('file-data').files;
+    let file = elm[0];
+    if (!(file.type === 'application/json')) {
         alert('Wrong file type! Only JSON type accepted.');
         const welcome_window = document.querySelector('.import_w');
         welcome_window.classList.add('import_w_hide');
@@ -1662,26 +1671,32 @@ document.getElementById('file-data').addEventListener("change", function (){
 
 
     let fileReader = new FileReader();
-    fileReader.onload = function(e) {
+    fileReader.onload = function (e) {
         var content = e.target.result;
         var data = JSON.parse(content); // Array of Objects.
 
-        if(data.length !== 3 ){
-           alert ('Wrong file uploaded !');
-           return;
-        }else{
-            localStorage.setItem('user', JSON.stringify(data[0]));
-            localStorage.setItem('semester_list', JSON.stringify(data[1]));
-            localStorage.setItem('major', JSON.stringify(data[2]));
+        if (data.length !== 3) {
+            alert('Wrong file uploaded !');
+            return;
+        } else {
+            if (data[0] !== null && data[1] !== null && data[2] !== null){
+                if (!check_key_in_local('user')){
+                    localStorage.setItem('user', JSON.stringify(data[0]));
+                }
+                localStorage.setItem('semester_list', JSON.stringify(data[1]));
+                localStorage.setItem('major', JSON.stringify(data[2]));
+                alert('Data loaded successfully !');
+                location.reload();
+            }else{
+                alert('Some Data is missing !');
+            }
 
-            alert('Data loaded successfully !');
-            location.reload();
+
+
         }
     };
 
     fileReader.readAsText(file);
-
-
 
 
 })
