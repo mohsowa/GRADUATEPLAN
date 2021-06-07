@@ -417,8 +417,6 @@ function display_semester_GPA(semester) {
                     if (major.courses_list[j].GPA === undefined){
                         major.courses_list[j].GPA = '';
                     }
-                    console.log(semester.name);
-                    console.log(major.courses_list[j].GPA);
                     return false;
                 }
             }
