@@ -354,9 +354,12 @@ function new_semester() {
 function display_semesters() {
     const elm_display_semester = document.getElementById('display_semester');
     elm_display_semester.innerHTML = null;
-    for (let i = 0; i < semester_list.length; i++) {
-        elm_display_semester.append(getCard_innerHTML(semester_list[i]));
-    }
+    semester_list.sort((semesterA, semesterB) => {
+      if (semesterA.name > semesterB.name) return 1;
+      if (semesterA.name < semesterB.name) return -1;
+      return 0;
+    });
+    semester_list.map((semester) => elm_display_semester.append(getCard_innerHTML(semester)));
     semester_status_Listener();
 }
 
