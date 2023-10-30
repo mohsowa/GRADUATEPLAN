@@ -2,3 +2,7 @@ version = 1
 
 [[analyzers]]
 name = "javascript"
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true
