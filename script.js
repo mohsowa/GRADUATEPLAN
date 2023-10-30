@@ -14,8 +14,6 @@ class Major {
     setName(name) {
         this.name = name
     }
-
-
 }
 
 class Course {
